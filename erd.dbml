@@ -1,0 +1,82 @@
+Table User {
+  Id int [pk]
+  username varchar
+  password varchar
+  email varchar
+  isActive bool
+}
+
+Table Household {
+  Id int [pk]
+  name varchar
+  createdDate datetime
+  createdById int [ref: > User.Id]
+  isActive bool
+}
+
+Table HouseholdUser {
+  Id int [pk]
+  householdId int [ref: > Household.Id]
+  userId int [ref: > User.Id]
+  joinDate datetime
+  isAdmin bool
+  isActive bool
+}
+
+Table Category {
+  Id int [pk]
+  name varchar
+}
+
+Table Expense {
+  Id int [pk]
+  householdId int [ref: > Household.Id]
+  amount decimal
+  description varchar
+  categoryId int [ref: > Category.Id]
+  dateSpent datetime
+  createdById int [ref: > User.Id] //loggedinUser
+  createdDate datetime
+  isRecurring bool
+  frequency varchar // weekly, bi-weekly, monthly
+  isActive bool // soft delete
+  isFavorite bool // For frequent expenses
+}
+
+Table Income {
+  Id int [pk]
+  householdId int [ref: > Household.Id]
+  amount decimal
+  source varchar
+  frequency varchar // weekly, bi-weekly, monthly
+  nextPayDate datetime // date given based off frequency
+  createdById int [ref: > User.Id] //loggedInUser
+  createdDate datetime
+  isFavorite bool // For dropdown of faved incomes
+}
+
+Table BudgetByCategory {
+  Id int [pk]
+  householdId int [ref: > Household.Id]
+  amount decimal
+  startDate datetime
+  endDate datetime
+  createdById int [ref: > User.Id]
+  createdDate datetime
+  categoryId int [ref: > Category.Id]
+  isActive bool // For tracking current vs past monthly budgets
+  isEnabled bool // if u dont need that category for the month aince categories are static
+}
+
+
+Table SharedExpense {
+  Id int [pk]
+  householdId int [ref: > Household.Id]
+  expenseId int [ref: > Expense.Id]
+  paidByUserId int [ref: > User.Id]
+  sharedWithUserId int [ref: > User.Id]  
+  SharePercentageOfUserLoggedIn decimal  
+  sharePercentageSharedWith decimal  
+  paidBack boolean  
+  createdDate datetime
+}
