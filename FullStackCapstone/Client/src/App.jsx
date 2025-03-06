@@ -8,9 +8,9 @@ import ApplicationViews from "./components/ApplicationViews";
 
 function App() {
   const [loggedInUser, setLoggedInUser] = useState();
+  const [currentHouseholdId, setCurrentHouseholdId] = useState(null);
 
   useEffect(() => {
-    // user will be null if not authenticated
     tryGetLoggedInUser().then((user) => {
       setLoggedInUser(user);
     });
@@ -23,10 +23,15 @@ function App() {
 
   return (
     <>
-      <NavBar loggedInUser={loggedInUser} setLoggedInUser={setLoggedInUser} />
+      <NavBar 
+        loggedInUser={loggedInUser} 
+        setLoggedInUser={setLoggedInUser} 
+        currentHouseholdId={currentHouseholdId}
+      />
       <ApplicationViews
         loggedInUser={loggedInUser}
         setLoggedInUser={setLoggedInUser}
+        setCurrentHouseholdId={setCurrentHouseholdId}
       />
     </>
   );

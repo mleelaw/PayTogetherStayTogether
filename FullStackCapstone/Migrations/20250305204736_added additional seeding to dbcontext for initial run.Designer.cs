@@ -3,6 +3,7 @@ using System;
 using FullStackCapstone.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FullStackCapstone.Migrations
 {
     [DbContext(typeof(FullStackCapstoneDbContext))]
-    partial class FullStackCapstoneDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250305204736_added additional seeding to dbcontext for initial run")]
+    partial class addedadditionalseedingtodbcontextforinitialrun
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -98,11 +101,14 @@ namespace FullStackCapstone.Migrations
                     b.Property<bool?>("IsFavorite")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsRecurring")
-                        .HasColumnType("boolean");
+                    b.Property<int?>("PurchasedById")
+                        .HasColumnType("integer");
 
                     b.Property<int>("PurchasedByUserId")
                         .HasColumnType("integer");
+
+                    b.Property<bool?>("isRecurring")
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
@@ -112,7 +118,7 @@ namespace FullStackCapstone.Migrations
 
                     b.HasIndex("HouseholdId");
 
-                    b.HasIndex("PurchasedByUserId");
+                    b.HasIndex("PurchasedById");
 
                     b.ToTable("Expenses");
 
@@ -127,8 +133,8 @@ namespace FullStackCapstone.Migrations
                             FrequencyId = 5,
                             HouseholdId = 1,
                             IsFavorite = true,
-                            IsRecurring = true,
-                            PurchasedByUserId = 2
+                            PurchasedByUserId = 2,
+                            isRecurring = true
                         },
                         new
                         {
@@ -139,8 +145,8 @@ namespace FullStackCapstone.Migrations
                             Description = "WaffleHouse",
                             HouseholdId = 1,
                             IsFavorite = false,
-                            IsRecurring = false,
-                            PurchasedByUserId = 3
+                            PurchasedByUserId = 3,
+                            isRecurring = false
                         },
                         new
                         {
@@ -152,8 +158,8 @@ namespace FullStackCapstone.Migrations
                             FrequencyId = 4,
                             HouseholdId = 1,
                             IsFavorite = true,
-                            IsRecurring = true,
-                            PurchasedByUserId = 3
+                            PurchasedByUserId = 3,
+                            isRecurring = true
                         });
                 });
 
@@ -538,13 +544,13 @@ namespace FullStackCapstone.Migrations
                         {
                             Id = "dbc40bc6-0829-4ac5-a3ed-180f5e916a5f",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "af98ee58-f94d-4519-9a34-3e1318b122c0",
+                            ConcurrencyStamp = "ceadb0d6-7413-42e7-a2bf-d163418c92b4",
                             Email = "admina@strator.comx",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAIAAYagAAAAEPAqr4vK8J+l4Cd5AqHR/wVa/aRFYdP/7Al39o0TSzYfCL1WqPsI3HhCWSI7xgiyBw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEIT4yxg6+ZLvqsR4fwKDlk5RCY0qqMDPK0rqMPvU5SKIZzYbIacyFOfzkXcowBOJZQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "5772659b-2865-42f0-bb4c-be85cbbc3aed",
+                            SecurityStamp = "ec040a92-c304-4d8e-beb5-1a772b2dca21",
                             TwoFactorEnabled = false,
                             UserName = "Administrator"
                         },
@@ -552,13 +558,13 @@ namespace FullStackCapstone.Migrations
                         {
                             Id = "someOtherUserId123456789",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e8ca3922-dc8d-4560-bec3-96c13b67aa3e",
+                            ConcurrencyStamp = "6da0a170-7372-4a95-9e57-6c570f2a75b0",
                             Email = "mleelaw123@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAIAAYagAAAAEGllkz0FqJDKIs3BQlUUmFZ2tjuby+CJu5KuekKpB7yjBVB4M9iX4geLUz5zRUxbLA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEG6C4x6WupbWKhP9WETwtgJaJUlEF1IJ6gzDbDal+9j2dI595m4ynh7AOfN5QYeYBw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "3d304756-dcce-4a0c-a0a0-01ac4b051c32",
+                            SecurityStamp = "237d30ce-3686-4fff-a2b7-96222c4b0d5f",
                             TwoFactorEnabled = false,
                             UserName = "MLee"
                         },
@@ -566,13 +572,13 @@ namespace FullStackCapstone.Migrations
                         {
                             Id = "someOtherUserId123456788",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ae7e1172-06b7-431f-b6b7-70a02c8b90a2",
+                            ConcurrencyStamp = "7d659e56-a496-44c9-a0c8-237486b28968",
                             Email = "maezell@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAIAAYagAAAAEBrqw/U+d+OmxIiz3X6mbVrpBnrtURlZWokVvEswU1+ntOQ4yJLRaW4EnverRipMaQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEPHlEL/q64U/WBfKafMVc4gg6Qlh47hg8OCdr7iWS/NQH20ZIAvUMGIerg7yLHC1Rg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "cf250651-ccef-4f20-acda-5ac335aa95dc",
+                            SecurityStamp = "68e6b71e-6ac2-40b7-8aa5-878910517ba3",
                             TwoFactorEnabled = false,
                             UserName = "Abigail"
                         });
@@ -696,9 +702,7 @@ namespace FullStackCapstone.Migrations
 
                     b.HasOne("FullStackCapstone.Models.UserProfile", "PurchasedBy")
                         .WithMany()
-                        .HasForeignKey("PurchasedByUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PurchasedById");
 
                     b.Navigation("Category");
 

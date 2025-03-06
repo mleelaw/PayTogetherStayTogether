@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink as RRNavLink } from "react-router-dom";
+import { NavLink as RRNavLink, useNavigate } from "react-router-dom";
 import {
   Button,
   Collapse,
@@ -12,7 +12,11 @@ import {
 } from "reactstrap";
 import { logout } from "../managers/authManager";
 
-export default function NavBar({ loggedInUser, setLoggedInUser }) {
+export default function NavBar({
+  loggedInUser,
+  setLoggedInUser,
+  currentHouseholdId,
+}) {
   const [open, setOpen] = useState(false);
 
   const toggleNavbar = () => setOpen(!open);
@@ -21,7 +25,7 @@ export default function NavBar({ loggedInUser, setLoggedInUser }) {
     <div>
       <Navbar color="light" light fixed="true" expand="lg">
         <NavbarBrand className="mr-auto" tag={RRNavLink} to="/">
-          Application Template
+          Budget Tracker
         </NavbarBrand>
         {loggedInUser ? (
           <>
@@ -29,10 +33,59 @@ export default function NavBar({ loggedInUser, setLoggedInUser }) {
             <Collapse isOpen={open} navbar>
               <Nav navbar>
                 <NavItem onClick={() => setOpen(false)}>
-                  <NavLink tag={RRNavLink} to="/">
+                  <NavLink tag={RRNavLink} to="/household">
                     Home
                   </NavLink>
                 </NavItem>
+
+                {currentHouseholdId && (
+                  <>
+                    <NavItem>
+                      <NavItem>
+                        <select
+                          className="nav-select"
+                          onChange={(e) => {
+                            if (e.target.value) {
+                              window.location.href = e.target.value;
+                            }
+                          }}
+                          value=""
+                        >
+                          <option value="" disabled>
+                            Expense
+                          </option>
+                          <option
+                            value={`/household/${currentHouseholdId}/expense`}
+                          >
+                            View Expenses
+                          </option>
+                          <option
+                            value={`/household/${currentHouseholdId}/expense/create`}
+                          >
+                            Add Expense
+                          </option>
+                        </select>
+                      </NavItem>
+                    </NavItem>
+                    <NavItem>
+                      <NavLink
+                        tag={RRNavLink}
+                        to={`/household/${currentHouseholdId}/budget`}
+                      >
+                        Budget
+                      </NavLink>
+                    </NavItem>
+                    <NavItem>
+                      <NavLink
+                        tag={RRNavLink}
+                        to={`/household/${currentHouseholdId}/income`}
+                      >
+                        Income
+                      </NavLink>
+                    </NavItem>
+                  </>
+                )}
+
                 {loggedInUser.roles.includes("Admin") && (
                   <NavItem onClick={() => setOpen(false)}>
                     <NavLink tag={RRNavLink} to="/admin">
@@ -46,10 +99,9 @@ export default function NavBar({ loggedInUser, setLoggedInUser }) {
               color="primary"
               onClick={(e) => {
                 e.preventDefault();
-                setOpen(false);
                 logout().then(() => {
                   setLoggedInUser(null);
-                  setOpen(false);
+                  window.location.href = "/";
                 });
               }}
             >
@@ -59,7 +111,7 @@ export default function NavBar({ loggedInUser, setLoggedInUser }) {
         ) : (
           <Nav navbar>
             <NavItem>
-              <NavLink tag={RRNavLink} to="/login">
+              <NavLink tag={RRNavLink} to="/">
                 <Button color="primary">Login</Button>
               </NavLink>
             </NavItem>

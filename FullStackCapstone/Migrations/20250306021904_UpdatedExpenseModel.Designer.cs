@@ -3,6 +3,7 @@ using System;
 using FullStackCapstone.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FullStackCapstone.Migrations
 {
     [DbContext(typeof(FullStackCapstoneDbContext))]
-    partial class FullStackCapstoneDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250306021904_UpdatedExpenseModel")]
+    partial class UpdatedExpenseModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -98,7 +101,7 @@ namespace FullStackCapstone.Migrations
                     b.Property<bool?>("IsFavorite")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsRecurring")
+                    b.Property<bool?>("IsRecurring")
                         .HasColumnType("boolean");
 
                     b.Property<int>("PurchasedByUserId")
@@ -538,13 +541,13 @@ namespace FullStackCapstone.Migrations
                         {
                             Id = "dbc40bc6-0829-4ac5-a3ed-180f5e916a5f",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "af98ee58-f94d-4519-9a34-3e1318b122c0",
+                            ConcurrencyStamp = "8f04bf87-b9d2-4734-94d4-35a6be3e5867",
                             Email = "admina@strator.comx",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAIAAYagAAAAEPAqr4vK8J+l4Cd5AqHR/wVa/aRFYdP/7Al39o0TSzYfCL1WqPsI3HhCWSI7xgiyBw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEOz3Ye/RpiA4Frxn11ftL+PjEhVghEvjMd2xloDZy1nl9HJl2LKoiAam6WUHRbFECw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "5772659b-2865-42f0-bb4c-be85cbbc3aed",
+                            SecurityStamp = "e7f4c3ba-4a2b-4bfe-b8ff-86b9a503de18",
                             TwoFactorEnabled = false,
                             UserName = "Administrator"
                         },
@@ -552,13 +555,13 @@ namespace FullStackCapstone.Migrations
                         {
                             Id = "someOtherUserId123456789",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e8ca3922-dc8d-4560-bec3-96c13b67aa3e",
+                            ConcurrencyStamp = "efe7cec5-1411-4cfb-951a-97cec061d4fa",
                             Email = "mleelaw123@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAIAAYagAAAAEGllkz0FqJDKIs3BQlUUmFZ2tjuby+CJu5KuekKpB7yjBVB4M9iX4geLUz5zRUxbLA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHv2RNPiAMhGfjPZ3z25l6oT/LdH7BoROG52hUpyJsEuq2bM2MKQ09vDQZopB+jjfQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "3d304756-dcce-4a0c-a0a0-01ac4b051c32",
+                            SecurityStamp = "18c52a98-59de-4c5d-90ed-2319e066b14b",
                             TwoFactorEnabled = false,
                             UserName = "MLee"
                         },
@@ -566,13 +569,13 @@ namespace FullStackCapstone.Migrations
                         {
                             Id = "someOtherUserId123456788",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ae7e1172-06b7-431f-b6b7-70a02c8b90a2",
+                            ConcurrencyStamp = "71a9cfee-6642-4c73-aec7-5bd7f6fc5c44",
                             Email = "maezell@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAIAAYagAAAAEBrqw/U+d+OmxIiz3X6mbVrpBnrtURlZWokVvEswU1+ntOQ4yJLRaW4EnverRipMaQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEL645wTWntaJA6qUxhbwpjOYm3GlKpZdex6/g44nolt2b2Z6elLW5y8QrsyNwcF6Bg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "cf250651-ccef-4f20-acda-5ac335aa95dc",
+                            SecurityStamp = "2a9435e0-b271-4f55-b9a8-8f6b4957e074",
                             TwoFactorEnabled = false,
                             UserName = "Abigail"
                         });
