@@ -31,7 +31,7 @@ export default function CreateExpense({ setCurrentHouseholdId, loggedInUser }) {
   useEffect(() => {
     setCurrentHouseholdId(householdId);
     GetExpenses(householdId).then((data) => setExpenses(data));
-    GetCategories().then((data) => setCategories(data));
+    GetCategories(householdId).then((data) => setCategories(data.categories))
 
     if (isEditing) {
       GetExpenseById(householdId, expenseId).then((expense) => {
