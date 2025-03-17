@@ -39,7 +39,7 @@ export default function CreateExpense({ setCurrentHouseholdId, loggedInUser }) {
         setAmount(expense.amount);
         setCategoryId(expense.categoryId.toString());
         setDescription(expense.description);
-        setDateOfExpense(expense.dateOfExpense.split('T')[0]); // date from api is coming back inISO format this is grabbing just the xx/xx/xxxx part of this.
+        setDateOfExpense(expense.dateOfExpense.split('T')[0]); // date from api is coming back inISO format this is grabbing just the xx/xx/xxxx part of this
         setIsRecurring(expense.isRecurring);
         setFrequencyId(expense.frequencyId ? expense.frequencyId.toString() : "0");
         setIsFavorite(expense.isFavorite);
@@ -75,12 +75,6 @@ export default function CreateExpense({ setCurrentHouseholdId, loggedInUser }) {
     }
   };
 
-  // const handleDeleteExpense = (expenseId) => {
-  //   DeleteExpense(householdId, expenseId).then(() => {
-  //     GetExpenses(householdId).then((data) => setExpenses(data));
-  //   });
-  // };
- 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const month = (date.getMonth() + 1).toString().padStart(2, "0");
@@ -141,6 +135,7 @@ export default function CreateExpense({ setCurrentHouseholdId, loggedInUser }) {
               id="dateOfExpense"
               value={dateOfExpense}
               onChange={(e) => setDateOfExpense(e.target.value)}
+              max={new Date().toISOString().split('T')[0]} 
               required
             />
           </FormGroup>

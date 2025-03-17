@@ -19,5 +19,5 @@ public class HouseholdUser
     public DateTime JoinDate { get; } = DateTime.Now;
     public bool IsActive { get; set; } = true;
 
-    public bool IsAdmin { get; set; } = true;
+    public bool IsAdmin { get; set; } = false;
 }

@@ -27,6 +27,7 @@ function App() {
         loggedInUser={loggedInUser} 
         setLoggedInUser={setLoggedInUser} 
         currentHouseholdId={currentHouseholdId}
+        setCurrentHouseholdId={setCurrentHouseholdId}
       />
       <ApplicationViews
         loggedInUser={loggedInUser}

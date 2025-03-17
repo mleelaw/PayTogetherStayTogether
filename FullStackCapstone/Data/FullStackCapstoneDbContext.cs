@@ -81,7 +81,7 @@ public class FullStackCapstoneDbContext : IdentityDbContext<IdentityUser>
                     Email = "maezell@gmail.com",
                     PasswordHash = new PasswordHasher<IdentityUser>().HashPassword(
                         null,
-                        _configuration["AdminPassword"] // Or a different password if needed
+                        _configuration["AdminPassword"]
                     ),
                 }
             );
@@ -176,6 +176,19 @@ public class FullStackCapstoneDbContext : IdentityDbContext<IdentityUser>
                     IsFavorite = true,
                     FrequencyId = 4,
                     DateOfExpense = new DateTime(2023, 3, 03),
+                },
+                new Expense
+                {
+                    Id = 4,
+                    HouseholdId = 2,
+                    Amount = 1900m,
+                    CategoryId = 1,
+                    Description = "Rent",
+                    PurchasedByUserId = 1,
+                    IsRecurring = true,
+                    IsFavorite = true,
+                    FrequencyId = 4,
+                    DateOfExpense = new DateTime(2023, 3, 03),
                 }
             );
 
@@ -190,6 +203,13 @@ public class FullStackCapstoneDbContext : IdentityDbContext<IdentityUser>
                     Name = "She & Her",
                     IsActive = true,
                     UserProfileId = 2,
+                },
+                new Household
+                {
+                    Id = 2,
+                    Name = "My Other Family",
+                    IsActive = true,
+                    UserProfileId = 1,
                 }
             );
 
@@ -208,6 +228,22 @@ public class FullStackCapstoneDbContext : IdentityDbContext<IdentityUser>
                 {
                     Id = 2,
                     HouseholdId = 1,
+                    UserProfileId = 3,
+                    IsActive = true,
+                    IsAdmin = false,
+                },
+                new HouseholdUser
+                {
+                    Id = 3,
+                    HouseholdId = 2,
+                    UserProfileId = 1,
+                    IsActive = true,
+                    IsAdmin = false,
+                },
+                new HouseholdUser
+                {
+                    Id = 4,
+                    HouseholdId = 2,
                     UserProfileId = 3,
                     IsActive = true,
                     IsAdmin = false,
@@ -235,6 +271,17 @@ public class FullStackCapstoneDbContext : IdentityDbContext<IdentityUser>
                     IsFavorite = true,
                     IsFrequent = true,
                     HouseholdId = 1,
+                    FrequencyId = 3,
+                },
+                new Income
+                {
+                    Id = 3,
+                    Amount = 2400m,
+                    Source = "Work",
+                    CreatedById = 1,
+                    IsFavorite = true,
+                    IsFrequent = true,
+                    HouseholdId = 2,
                     FrequencyId = 3,
                 }
             );

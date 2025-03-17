@@ -20,6 +20,7 @@ export default function NavBar({
   loggedInUser,
   setLoggedInUser,
   currentHouseholdId,
+  setCurrentHouseholdId
 }) {
   const [open, setOpen] = useState(false);
   const [expenseDropdownOpen, setExpenseDropdownOpen] = useState(false);
@@ -38,14 +39,20 @@ export default function NavBar({
           <NavbarToggler onClick={toggleNavbar} />
           <Collapse isOpen={open} navbar>
             <Nav navbar>
-              <NavItem onClick={() => setOpen(false)}>
-                <NavLink tag={RRNavLink} to="/household">
-                  Home
+            <NavItem onClick={() => setOpen(false)}>
+                <NavLink tag={RRNavLink} onClick={() => setCurrentHouseholdId(null)} to="/household">
+                  View Households
                 </NavLink>
               </NavItem>
+              
 
               {currentHouseholdId && (
                 <>
+                  <NavItem onClick={() => setOpen(false)}>
+                <NavLink tag={RRNavLink} to={`/household/${currentHouseholdId}`}>
+                  Household Dashboard
+                </NavLink>
+              </NavItem>
                   <Dropdown nav isOpen={expenseDropdownOpen} toggle={toggleExpenseDropdown}>
                     <DropdownToggle nav caret>
                       Expense
