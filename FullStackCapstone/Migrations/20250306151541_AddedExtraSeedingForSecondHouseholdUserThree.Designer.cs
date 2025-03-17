@@ -3,6 +3,7 @@ using System;
 using FullStackCapstone.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FullStackCapstone.Migrations
 {
     [DbContext(typeof(FullStackCapstoneDbContext))]
-    partial class FullStackCapstoneDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250306151541_AddedExtraSeedingForSecondHouseholdUserThree")]
+    partial class AddedExtraSeedingForSecondHouseholdUserThree
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -585,13 +588,13 @@ namespace FullStackCapstone.Migrations
                         {
                             Id = "dbc40bc6-0829-4ac5-a3ed-180f5e916a5f",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "1762790c-cb64-4363-8f84-eb24bd4bba58",
+                            ConcurrencyStamp = "731e0955-3f37-4293-b082-3353fca9022c",
                             Email = "admina@strator.comx",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAIAAYagAAAAEA23hN6nDjA+ojHk0hBSdjpX3pOSbBqp3xZ2JqCZy/gVuEDZyMa0LEP5XAHrbkMbkg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKnThfbE1/5rACZWT3R05ZM77BREU+c6i06cl+S6nFZymzCvnn/o5IRNHN+4mCxSsg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "97ef510c-3deb-4223-8262-218103383beb",
+                            SecurityStamp = "0f45ea7e-b042-4b7c-a2b7-9c6b68c147e6",
                             TwoFactorEnabled = false,
                             UserName = "Administrator"
                         },
@@ -599,13 +602,13 @@ namespace FullStackCapstone.Migrations
                         {
                             Id = "someOtherUserId123456789",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e80c78d8-69e6-4bd4-9de5-e837846f904c",
+                            ConcurrencyStamp = "a95e6a07-cad9-4d4c-af7c-64a35bef3fc4",
                             Email = "mleelaw123@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAIAAYagAAAAEHTFRJVqW8u/dFQwdjtgQo+iO9Hw2kuO7EBJuG2Pp6d9y+1RcU5iuDdCAKdql22ouQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEGe7vlY7KGnMn64ORD264juz4uGMJmUSgxsE3h7p1ZH9n6+Vr8cmNBGs2IyCLW1iVw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "757c4524-cf71-4e52-9b61-04b422c8a39f",
+                            SecurityStamp = "1eafd3ce-5689-431e-838a-b65b1936aa73",
                             TwoFactorEnabled = false,
                             UserName = "MLee"
                         },
@@ -613,13 +616,13 @@ namespace FullStackCapstone.Migrations
                         {
                             Id = "someOtherUserId123456788",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "6b85e992-f247-493f-9693-4286977f3f12",
+                            ConcurrencyStamp = "224d384d-8873-47a2-a5f2-0799acafeb0a",
                             Email = "maezell@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAIAAYagAAAAEJgUKgPTwSjoPwt3Y7TbFZjCa+Xy9vri+QZ5gtxMDOLbmUnhR0QZx1tkLoTg092eIw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEIPKJQL0GGzeA81y1YJFSuFW/FyoVxyrsc9GPyxSfJ6pC9EKJEct1OCs9FyZd/IJog==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "e0b2862a-a939-41c8-bb64-ffa812f997d4",
+                            SecurityStamp = "01b2fdd0-57b5-4533-b02a-f230b33e7443",
                             TwoFactorEnabled = false,
                             UserName = "Abigail"
                         });

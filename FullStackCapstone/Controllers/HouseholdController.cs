@@ -39,11 +39,73 @@ public class HouseholdController : ControllerBase
         return Ok(currentUsersHouseholdList);
     }
 
+    [HttpGet("available-households")]
+    [Authorize]
+    public IActionResult GetNonUserhouseholds()
+    {
+        var identityUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userProfile = _dbContext.UserProfiles.SingleOrDefault(up =>
+            up.IdentityUserId == identityUserId
+        );
+        if (userProfile == null)
+            return Unauthorized();
+
+        var availableHouseholds = _dbContext
+            .Households.Where(h =>
+                !_dbContext
+                    .HouseholdUsers.Where(hu => hu.UserProfileId == userProfile.Id)
+                    .Select(hu => hu.HouseholdId)
+                    .Contains(h.Id)
+            )
+            .Select(h => new
+            {
+                id = h.Id,
+                name = h.Name,
+                members = h
+                    .HouseholdUsers.Select(hu => new
+                    {
+                        id = hu.UserProfile.Id,
+                        name = hu.UserProfile.FirstName,
+                    })
+                    .ToList(),
+            })
+            .ToList();
+
+        return Ok(availableHouseholds);
+    }
+
+    [HttpPost("available-households")]
+    [Authorize]
+    public IActionResult AddMyselfToNewHousehold([FromBody] int householdId)
+    {
+        var identityUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userProfile = _dbContext.UserProfiles.SingleOrDefault(up =>
+            up.IdentityUserId == identityUserId
+        );
+        if (userProfile == null)
+            return Unauthorized();
+
+        var findNewHouse = _dbContext.Households.SingleOrDefault(h => h.Id == householdId);
+        if (findNewHouse == null)
+        {
+            return NotFound($"Household with ID {householdId} not found");
+        }
+
+        var newHouseholdUser = new HouseholdUser
+        {
+            HouseholdId = householdId,
+            UserProfileId = userProfile.Id,
+        };
+        _dbContext.HouseholdUsers.Add(newHouseholdUser);
+        _dbContext.SaveChanges();
+
+        return Ok("ADDED");
+    }
+
     [HttpGet("{householdId}")]
     [Authorize]
     public IActionResult GetExpensesForDashboard([FromRoute] int householdId)
     {
-
         //check this household exists
         var householdIdCheck = _dbContext.Households.SingleOrDefault(h => h.Id == householdId);
         if (householdIdCheck == null)
@@ -97,11 +159,15 @@ public class HouseholdController : ControllerBase
         var householdName = new HouseholdNameDTO { Id = household.Id, Name = household.Name };
 
         //now lets grab thte total % of our budget we are using
-        decimal activeCategoryTotalBudegt = _dbContext
+        decimal activeCategoryTotalBudget = _dbContext
             .Categories.Where(c => c.IsActive == true)
             .Sum(c => c.CategoryBudgetForTheMonth ?? 0m);
 
-        decimal budgetPercentageUsed = householdTotalExpense / activeCategoryTotalBudegt * 100;
+        decimal budgetPercentageUsed = 0;
+        if (activeCategoryTotalBudget > 0)
+        {
+            budgetPercentageUsed = householdTotalExpense / activeCategoryTotalBudget * 100;
+        }
 
         //assign my variables for clean readabilty/usabilty in return json
         //REMIDER add DTO for this
@@ -116,5 +182,65 @@ public class HouseholdController : ControllerBase
         };
 
         return Ok(response);
+    }
+
+    [HttpGet("all")]
+    [Authorize]
+    public IActionResult GetAllHouseholds()
+    {
+        List<HouseholdNameDTO> allHouseholds = _dbContext
+            .Households.Where(h => h.IsActive == true)
+            .Select(h => new HouseholdNameDTO { Id = h.Id, Name = h.Name })
+            .ToList();
+
+        return Ok(allHouseholds);
+    }
+
+    [HttpPost]
+    [Authorize]
+    public IActionResult CreateHousehold(HouseholdPostDTO household)
+    {
+        Household householdAddition = null;
+
+        using (var transaction = _dbContext.Database.BeginTransaction())
+        {
+            try
+            {
+                var identityUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var userProfile = _dbContext.UserProfiles.SingleOrDefault(up =>
+                    up.IdentityUserId == identityUserId
+                );
+                if (userProfile == null)
+                    return Unauthorized();
+
+                householdAddition = new Household
+                {
+                    Name = household.Name,
+                    UserProfileId = userProfile.Id,
+                };
+
+                _dbContext.Households.Add(householdAddition);
+                _dbContext.SaveChanges();
+
+                HouseholdUser addUserTonewHouse = new HouseholdUser
+                {
+                    HouseholdId = householdAddition.Id,
+                    UserProfileId = userProfile.Id,
+                    IsAdmin = true,
+                };
+
+                _dbContext.HouseholdUsers.Add(addUserTonewHouse);
+                _dbContext.SaveChanges();
+
+                transaction.Commit();
+            }
+            catch
+            {
+                transaction.Rollback();
+                throw;
+            }
+        }
+
+        return Created($"/api/households/{householdAddition.Id}", householdAddition);
     }
 }
