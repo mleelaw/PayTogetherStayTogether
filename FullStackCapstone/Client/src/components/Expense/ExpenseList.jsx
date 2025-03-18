@@ -7,17 +7,43 @@ import {
   CardText,
   Container,
   CardTitle,
+  Dropdown,
+  DropdownItem,
+  DropdownToggle,
+  DropdownMenu,
 } from "reactstrap";
 
 export default function ExpenseList({ setCurrentHouseholdId, loggedInUser }) {
   const { householdId } = useParams();
   const [expenses, setExpenses] = useState([]);
-    const navigate = useNavigate();
+  const [yearFilter, setYearFilter] = useState();
+  const [dropdownYearOpen, setDropdownYearOpen] = useState(false);
+  const [monthFilter, setMonthFilter] = useState();
+  const [dropdownMonthOpen, setDropdownMonthOpen] = useState(false);
+
+  const navigate = useNavigate();
+  const years = [
+    2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030,
+  ];
+  const months = [
+    { value: 1, label: "January" },
+    { value: 2, label: "February" },
+    { value: 3, label: "March" },
+    { value: 4, label: "April" },
+    { value: 5, label: "May" },
+    { value: 6, label: "June" },
+    { value: 7, label: "July" },
+    { value: 8, label: "August" },
+    { value: 9, label: "September" },
+    { value: 10, label: "October" },
+    { value: 11, label: "November" },
+    { value: 12, label: "December" },
+  ];
 
   useEffect(() => {
     setCurrentHouseholdId(householdId);
-    GetExpenses(householdId).then((data) => setExpenses(data));
-  }, [householdId, setCurrentHouseholdId]);
+    GetExpenses(householdId, monthFilter, yearFilter).then(setExpenses);
+  }, [householdId, monthFilter, yearFilter, setCurrentHouseholdId]);
 
   const handleDeleteExpense = (expenseId) => {
     DeleteExpense(householdId, expenseId).then(() => {
@@ -37,6 +63,63 @@ export default function ExpenseList({ setCurrentHouseholdId, loggedInUser }) {
     <Container className="text-center">
       <h3>Expense List</h3>
 
+      <Dropdown
+        isOpen={dropdownYearOpen}
+        toggle={() => setDropdownYearOpen(!dropdownYearOpen)}
+      >
+        <DropdownToggle caret>
+          {yearFilter ? `Year: ${yearFilter}` : "Select Year"}
+        </DropdownToggle>
+        <DropdownMenu>
+          <DropdownItem
+            onClick={() => {
+              setYearFilter(null);
+              setDropdownYearOpen(false);
+            }}
+          >
+            All Years
+          </DropdownItem>
+          {years.map((year) => (
+            <DropdownItem
+              key={year}
+              onClick={() => {
+                setYearFilter(year);
+                setDropdownYearOpen(false);
+              }}
+            >
+              {year}
+            </DropdownItem>
+          ))}
+        </DropdownMenu>
+      </Dropdown>
+
+       <Dropdown
+        isOpen={dropdownMonthOpen}
+        toggle={() => setDropdownMonthOpen(!dropdownMonthOpen)}
+      >
+        <DropdownToggle caret>
+          {monthFilter ? `Month: ${months.find((m) => m.value === monthFilter)?.label}` : "Select Month"}
+        </DropdownToggle>
+        <DropdownMenu>
+          <DropdownItem
+            onClick={() => {
+              setMonthFilter(null);
+              setDropdownMonthOpen(false);
+            }}
+          >
+            All Months
+          </DropdownItem>
+          {months.map((month) => (
+  <DropdownItem
+    key={month.value}
+    onClick={() => setMonthFilter(month.value)}
+  >
+    {month.label}
+  </DropdownItem>
+))}
+        </DropdownMenu>
+      </Dropdown>
+
       {expenses.map((e) => (
         <Card key={e.id} className="text-center">
           <CardTitle>{formatDate(e.dateOfExpense)}</CardTitle>
@@ -47,16 +130,10 @@ export default function ExpenseList({ setCurrentHouseholdId, loggedInUser }) {
           </CardText>
           {e.purchasedByUserId === loggedInUser.id && (
             <div>
-              <Button 
-                onClick={() => handleDeleteExpense(e.id)}
-              >
-                Delete
-              </Button>
+              <Button onClick={() => handleDeleteExpense(e.id)}>Delete</Button>
               <Button
                 onClick={() =>
-                  navigate(
-                    `/household/${householdId}/expense/create/${e.id}`
-                  )
+                  navigate(`/household/${householdId}/expense/create/${e.id}`)
                 }
               >
                 Edit

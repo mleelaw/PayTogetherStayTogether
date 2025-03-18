@@ -106,13 +106,13 @@ public class HouseholdController : ControllerBase
     [Authorize]
     public IActionResult GetExpensesForDashboard([FromRoute] int householdId)
     {
-        //check this household exists
+
         var householdIdCheck = _dbContext.Households.SingleOrDefault(h => h.Id == householdId);
         if (householdIdCheck == null)
         {
             return NotFound();
         }
-        //grab each users own expenses and total em up
+
         var userExpenseTotals = _dbContext
             .Expenses.Where(e => e.HouseholdId == householdId)
             .GroupBy(e => e.PurchasedByUserId)
@@ -128,7 +128,7 @@ public class HouseholdController : ControllerBase
             })
             .ToList();
 
-        //grab each users own inncomes and total em up
+
         var userIncomeTotals = _dbContext
             .Incomes.Where(i => i.HouseholdId == householdId)
             .GroupBy(i => i.CreatedById)
@@ -144,21 +144,21 @@ public class HouseholdController : ControllerBase
             })
             .ToList();
 
-        //total of households expenses
+
         decimal householdTotalExpense = _dbContext
             .Expenses.Where(e => e.HouseholdId == householdId)
             .Sum(e => e.Amount);
 
-        //total of households incomes
+
         decimal householdTotalIncome = _dbContext
             .Incomes.Where(i => i.HouseholdId == householdId)
             .Sum(i => i.Amount);
 
-        //easy grab of HouseholdName
+
         Household household = _dbContext.Households.SingleOrDefault(h => h.Id == householdId);
         var householdName = new HouseholdNameDTO { Id = household.Id, Name = household.Name };
 
-        //now lets grab thte total % of our budget we are using
+
         decimal activeCategoryTotalBudget = _dbContext
             .Categories.Where(c => c.IsActive == true)
             .Sum(c => c.CategoryBudgetForTheMonth ?? 0m);
@@ -169,8 +169,6 @@ public class HouseholdController : ControllerBase
             budgetPercentageUsed = householdTotalExpense / activeCategoryTotalBudget * 100;
         }
 
-        //assign my variables for clean readabilty/usabilty in return json
-        //REMIDER add DTO for this
         var response = new
         {
             UserExpenses = userExpenseTotals,

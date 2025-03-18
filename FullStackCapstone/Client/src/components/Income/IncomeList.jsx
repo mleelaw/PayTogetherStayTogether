@@ -1,54 +1,51 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { GetIncomes, CreateIncome, DeleteIncome } from "../../managers/incomeManager";
+import { GetIncomes, DeleteIncome } from "../../managers/incomeManager";
 import {
-  Form,
-  FormGroup,
-  Input,
-  Label,
   Button,
   Card,
   CardText,
   Container,
   CardTitle,
+  Dropdown,
+  DropdownItem,
+  DropdownToggle,
+  DropdownMenu,
 } from "reactstrap";
 
 export default function IncomeList({ setCurrentHouseholdId, loggedInUser }) {
   const { householdId } = useParams();
   const [income, setIncome] = useState([]);
-  const [amount, setAmount] = useState("");
-  const [source, setSource] = useState("");
-  const [frequencyId, setFrequencyId] = useState("0");
-  const [isFavorite, setIsFavorite] = useState(false);
-  const [isFrequent, setIsFrequent] = useState(false);
+  const [yearFilter, setYearFilter] = useState();
+  const [dropdownYearOpen, setDropdownYearOpen] = useState(false);
+  const [monthFilter, setMonthFilter] = useState();
+  const [dropdownMonthOpen, setDropdownMonthOpen] = useState(false);
+
+  const years = [
+    2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030,
+  ];
+  const months = [
+    { value: 1, label: "January" },
+    { value: 2, label: "February" },
+    { value: 3, label: "March" },
+    { value: 4, label: "April" },
+    { value: 5, label: "May" },
+    { value: 6, label: "June" },
+    { value: 7, label: "July" },
+    { value: 8, label: "August" },
+    { value: 9, label: "September" },
+    { value: 10, label: "October" },
+    { value: 11, label: "November" },
+    { value: 12, label: "December" },
+  ];
 
   useEffect(() => {
     setCurrentHouseholdId(householdId);
-    GetIncomes(householdId).then((data) => setIncome(data));
-  }, [householdId, setCurrentHouseholdId]);
+    GetIncomes(householdId, monthFilter, yearFilter).then((data) => setIncome(data));
+  }, [householdId, monthFilter, yearFilter, setCurrentHouseholdId]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
 
-    //REMINDER look into propertyshorthand on these
-    const newIncome = {
-      amount: parseFloat(amount),
-      source: source,
-      frequencyId: frequencyId,
-      isFrequent: isFrequent,
-      isFavorite: isFavorite,
-    };
-
-    CreateIncome(householdId, newIncome).then(() => {
-      setAmount("");
-      setSource("");
-      setFrequencyId("0");
-      setIsFavorite(false);
-      window.alert("Income added!");
-      GetIncomes(householdId).then((data) => setIncome(data));
-    });
-  };
-
+    
   const handleDeleteIncome = (incomeId) => {
     DeleteIncome(householdId, incomeId).then(() => {
       GetIncomes(householdId).then((data) => setIncome(data));
@@ -64,99 +61,83 @@ export default function IncomeList({ setCurrentHouseholdId, loggedInUser }) {
   };
 
   return (
-    <>
-      <Container className="text-center">
-        <h3 className="text-center">Add Income</h3>
-        <Form onSubmit={handleSubmit}>
-          <FormGroup>
-            <Label for="amount">Amount</Label>
-            <Input
-              type="number"
-              id="amount"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              required
-            />
-          </FormGroup>
-
-          <FormGroup>
-            <Label for="source">Source</Label>
-            <Input
-              type="text"
-              id="source"
-              value={source}
-              onChange={(e) => setSource(e.target.value)}
-              required
-            />
-          </FormGroup>
-
-          <FormGroup check>
-            <Label check>
-              <Input
-                type="checkbox"
-                checked={isFrequent}
-                onChange={(e) => setIsFrequent(e.target.checked)}
-              />
-              Recurring Income
-            </Label>
-          </FormGroup>
-
-          {isFrequent && (
-            <FormGroup>
-              <Label for="frequency">Frequency</Label>
-              <Input
-                type="select"
-                id="frequency"
-                value={frequencyId}
-                onChange={(e) => setFrequencyId(e.target.value)}
-                required={isFrequent}
-              >
-                <option value="0">Select a frequency</option>
-                <option value="1">Daily</option>
-                <option value="2">Weekly</option>
-                <option value="3">Bi-Weekly</option>
-                <option value="4">Monthly</option>
-                <option value="5">Quarterly</option>
-                <option value="6">Annually</option>
-              </Input>
-            </FormGroup>
-          )}
-
-          <FormGroup check>
-            <Label check>
-              <Input
-                type="checkbox"
-                checked={isFavorite}
-                onChange={(e) => setIsFavorite(e.target.checked)}
-              />
-              Favorite?
-            </Label>
-          </FormGroup>
-
-          <div className="text-center">
-            <Button type="submit">Add Income</Button>
-          </div>
-        </Form>
-      </Container>
 
       <Container className="text-center">
-        <h3>Income List</h3>
+      <h3>Income List</h3>
+      
+      <Dropdown
+        isOpen={dropdownYearOpen}
+        toggle={() => setDropdownYearOpen(!dropdownYearOpen)}
+      >
+        <DropdownToggle caret>
+          {yearFilter ? `Year: ${yearFilter}` : "Select Year"}
+        </DropdownToggle>
+        <DropdownMenu>
+          <DropdownItem
+            onClick={() => {
+              setYearFilter(null);
+              setDropdownYearOpen(false);
+            }}
+          >
+            All Years
+          </DropdownItem>
+          {years.map((year) => (
+            <DropdownItem
+              key={year}
+              onClick={() => {
+                setYearFilter(year);
+                setDropdownYearOpen(false);
+              }}
+            >
+              {year}
+            </DropdownItem>
+          ))}
+        </DropdownMenu>
+      </Dropdown>
+
+       <Dropdown
+        isOpen={dropdownMonthOpen}
+        toggle={() => setDropdownMonthOpen(!dropdownMonthOpen)}
+      >
+        <DropdownToggle caret>
+          {monthFilter ? `Month: ${months.find((m) => m.value === monthFilter)?.label}` : "Select Month"}
+        </DropdownToggle>
+        <DropdownMenu>
+          <DropdownItem
+            onClick={() => {
+              setMonthFilter(null);
+              setDropdownMonthOpen(false);
+            }}
+          >
+            All Months
+          </DropdownItem>
+          {months.map((month) => (
+  <DropdownItem
+    key={month.value}
+    onClick={() => setMonthFilter(month.value)}
+  >
+    {month.label}
+  </DropdownItem>
+))}
+        </DropdownMenu>
+      </Dropdown>
 
         {income.map((i) => (
           <Card key={i.id} className="text-center">
             <CardTitle>{formatDate(i.incomeCreatedDate)}</CardTitle>
             <CardText>
               ${i.amount} - {i.source}
-              {i.frequency && ` (${i.frequency.description})`}
+              {i.frequency && ` (${i.frequency.description})`};
+            
+          
             </CardText>
             {i.createdById === loggedInUser.id && 
               <Button onClick={() => handleDeleteIncome(i.id)}>
                 Delete
               </Button>
-            }
+              }
           </Card>
         ))}
       </Container>
-    </>
   );
 }

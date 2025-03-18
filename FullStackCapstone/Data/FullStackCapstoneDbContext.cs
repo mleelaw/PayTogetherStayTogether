@@ -66,17 +66,17 @@ public class FullStackCapstoneDbContext : IdentityDbContext<IdentityUser>
                 },
                 new IdentityUser
                 {
-                    Id = "someOtherUserId123456789", // Use this exact ID to match your IdentityUserRole
+                    Id = "someOtherUserId123456789",
                     UserName = "MLee",
                     Email = "mleelaw123@gmail.com",
                     PasswordHash = new PasswordHasher<IdentityUser>().HashPassword(
                         null,
-                        _configuration["AdminPassword"] // Or a different password if needed
+                        _configuration["AdminPassword"]
                     ),
                 },
                 new IdentityUser
                 {
-                    Id = "someOtherUserId123456788", // Use this exact ID to match your IdentityUserRole
+                    Id = "someOtherUserId123456788",
                     UserName = "Abigail",
                     Email = "maezell@gmail.com",
                     PasswordHash = new PasswordHasher<IdentityUser>().HashPassword(

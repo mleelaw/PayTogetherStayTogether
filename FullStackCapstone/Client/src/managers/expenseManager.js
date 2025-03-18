@@ -1,5 +1,14 @@
-export const GetExpenses = (householdId) => {
-  const _apiUrl = `/api/household/${householdId}/expense`;
+export const GetExpenses = (householdId, month, year) => {
+  let _apiUrl = `/api/household/${householdId}/expense`;
+
+  const params = new URLSearchParams(); //builtin js class
+  if (month !== null && month !== undefined) params.append("month", month);
+  if (year !== null && year !== undefined) params.append("year", year);
+
+  if (params.toString()) {
+    _apiUrl += `?${params.toString()}`;
+  }
+
   return fetch(_apiUrl).then((response) => response.json());
 };
 
@@ -24,7 +33,7 @@ export const UpdateExpense = (householdId, expenseId, expense) => {
     body: JSON.stringify(expense),
   });
 };
-//REMINDER look into auth tokens...
+
 export const CreateNewExpense = (householdId, expense) => {
   return fetch(`/api/household/${householdId}/expense`, {
     method: "POST",
