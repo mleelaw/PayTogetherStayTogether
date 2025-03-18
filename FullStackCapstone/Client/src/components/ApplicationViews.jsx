@@ -8,6 +8,8 @@ import BudgetList from "./Budget/BudgetList";
 import Home from "./Homepage";
 import HouseholdDashboard from "./Household/HouseholdMain";
 import CreateExpense from "./Expense/ExpenseCreate";
+import CreateIncome from "./Income/IncomeCreate";
+import CreateNewIncome from "./Income/IncomeCreate";
 
 export default function ApplicationViews({
   loggedInUser,
@@ -66,7 +68,7 @@ export default function ApplicationViews({
           }
         />
         <Route
-          path="/household/:householdId/expense/create/:expenseId?"
+          path=":householdId/expense/create/:expenseId?"
           element={
             <CreateExpense
               setCurrentHouseholdId={setCurrentHouseholdId}
@@ -79,6 +81,17 @@ export default function ApplicationViews({
           element={
             <AuthorizedRoute loggedInUser={loggedInUser}>
               <IncomeList
+                setCurrentHouseholdId={setCurrentHouseholdId}
+                loggedInUser={loggedInUser}
+              />
+            </AuthorizedRoute>
+          }
+        />
+        <Route
+          path=":householdId/income/create/:incomeId?"
+          element={
+            <AuthorizedRoute loggedInUser={loggedInUser}>
+              <CreateNewIncome
                 setCurrentHouseholdId={setCurrentHouseholdId}
                 loggedInUser={loggedInUser}
               />

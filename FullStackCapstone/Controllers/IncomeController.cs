@@ -21,12 +21,28 @@ public class IncomeController : ControllerBase
 
     [HttpGet]
     [Authorize]
-    public IActionResult GetAllIncomesForHousehold([FromRoute] int householdId)
+    public IActionResult GetAllIncomesForHousehold(
+        [FromRoute] int householdId,
+        [FromQuery] int? month,
+        [FromQuery] int? year
+    )
     {
-        var findHouseholdIncomes = _dbContext
-            .Incomes.Where(i => i.HouseholdId == householdId).Include(i => i.Frequency)
-            .ToList();
-        return Ok(findHouseholdIncomes);
+        var query = _dbContext
+            .Incomes.Where(i => i.HouseholdId == householdId)
+            .Include(i => i.Frequency)
+            .AsQueryable();
+
+        if (month.HasValue)
+        {
+            query = query.Where(i => i.IncomeCreatedDate.Month == month.Value);
+        }
+
+        if (year.HasValue)
+        {
+            query = query.Where(i => i.IncomeCreatedDate.Year == year.Value);
+        }
+        var incomes = query.ToList();
+        return Ok(incomes);
     }
 
     [HttpPost]
@@ -61,7 +77,6 @@ public class IncomeController : ControllerBase
 
     [HttpDelete("{incomeId}")]
     [Authorize]
-
     public IActionResult Delete([FromRoute] int householdId, int incomeId)
     {
         var identityUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);

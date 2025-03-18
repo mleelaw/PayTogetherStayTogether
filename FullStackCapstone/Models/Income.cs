@@ -17,7 +17,7 @@ public class Income
     public int CreatedById { get; set; }
     public UserProfile Creator { get; set; }
 
-    public DateTime IncomeCreatedDate { get; } = DateTime.Now;
+    public DateTime IncomeCreatedDate { get; private set; } = DateTime.Now;
 
     public bool IsFavorite { get; set; } = false;
 

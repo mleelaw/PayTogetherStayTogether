@@ -79,7 +79,7 @@ export default function Home() {
             </DropdownMenu>
           </Dropdown>
         ) : (
-          <p>Yopu currebnlty Are Not A Mmber Of A Household, Add Yourself To An Existing Household or Create A nNew Oe To Start Budgeting</p>
+          <p>You currenltly are not a member of a household.</p>
         )}
       </Card>
       <Card>

@@ -44,17 +44,33 @@ public class ExpenseController : ControllerBase
 
     [HttpGet]
     [Authorize]
-    public IActionResult GetAllExpensesForHousehold([FromRoute] int householdId)
+    public IActionResult GetAllExpensesForHousehold(
+        [FromRoute] int householdId,
+        [FromQuery] int? month,
+        [FromQuery] int? year
+    )
     {
-        var expenseList = _dbContext
+        var query = _dbContext
             .Expenses.Where(e => e.HouseholdId == householdId)
             .Include(e => e.Category)
             .Include(e => e.PurchasedBy)
             .Include(e => e.Frequency)
-            .ToList();
+            .AsQueryable();
 
-        return Ok(expenseList);
+        if (year.HasValue)
+        {
+            query = query.Where(e => e.DateOfExpense.Year == year.Value);
+        }
+
+        if (month.HasValue)
+        {
+            query = query.Where(e => e.DateOfExpense.Month == month.Value);
+        }
+
+        var expenses = query.ToList();
+        return Ok(expenses);
     }
+
 
     [HttpDelete("{expenseId}")]
     [Authorize]

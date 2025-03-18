@@ -24,14 +24,16 @@ export default function NavBar({
 }) {
   const [open, setOpen] = useState(false);
   const [expenseDropdownOpen, setExpenseDropdownOpen] = useState(false);
+  const [incomeDropdownOpen, setIncomeDropdownOpen] = useState(false);
 
   const toggleNavbar = () => setOpen(!open);
   const toggleExpenseDropdown = () => setExpenseDropdownOpen(!expenseDropdownOpen);
+  const toggleIncomeDropdown = () => setIncomeDropdownOpen(!incomeDropdownOpen);
 
   return (
     <Navbar color="light" light fixed="true" expand="lg">
       <NavbarBrand tag={RRNavLink} to="/">
-        Budget Tracker
+        Pay Together, Stay Together
       </NavbarBrand>
       
       {loggedInUser ? (
@@ -66,15 +68,26 @@ export default function NavBar({
                       </DropdownItem>
                     </DropdownMenu>
                   </Dropdown>
-                  
+                 
+                  <NavItem>
+                  <Dropdown nav isOpen={incomeDropdownOpen} toggle={toggleIncomeDropdown}>
+                    <DropdownToggle nav caret>
+                      Income
+                    </DropdownToggle>
+                    <DropdownMenu>
+                      <DropdownItem tag={Link} to={`/household/${currentHouseholdId}/income`}>
+                        View Incomes
+                      </DropdownItem>
+                      <DropdownItem tag={Link} to={`/household/${currentHouseholdId}/income/create`}>
+                        Add Income
+                      </DropdownItem>
+                    </DropdownMenu>  
+                  </Dropdown>
+                  </NavItem>
+                   
                   <NavItem>
                     <NavLink tag={RRNavLink} to={`/household/${currentHouseholdId}/budget`}>
                       Budget
-                    </NavLink>
-                  </NavItem>
-                  <NavItem>
-                    <NavLink tag={RRNavLink} to={`/household/${currentHouseholdId}/income`}>
-                      Income
                     </NavLink>
                   </NavItem>
                 </>
