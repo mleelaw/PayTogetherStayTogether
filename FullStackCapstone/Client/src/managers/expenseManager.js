@@ -2,8 +2,8 @@ export const GetExpenses = (householdId, month, year) => {
   let _apiUrl = `/api/household/${householdId}/expense`;
 
   const params = new URLSearchParams(); //builtin js class
-  if (month !== null && month !== undefined) params.append("month", month);
-  if (year !== null && year !== undefined) params.append("year", year);
+  if (month != null) params.append("month", month);
+  if (year != null) params.append("year", year);
 
   if (params.toString()) {
     _apiUrl += `?${params.toString()}`;

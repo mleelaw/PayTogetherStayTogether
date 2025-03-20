@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Container, Card, CardText, CardTitle } from "reactstrap";
 import { getExpenseTotalAmount } from "../../managers/householdManager";
+import ExpensePieChart from "./HouseholdDashboardChart";
+
 
 export default function HouseholdDashboard({ setCurrentHouseholdId }) {
   const { householdId } = useParams();
@@ -59,6 +61,13 @@ export default function HouseholdDashboard({ setCurrentHouseholdId }) {
           Percentage of Our Budget We have Spent: {budgetTotal}%
         </CardText>
       </Card>
+      <Card>
+  <CardTitle className="text-center">{householdName.name} Budget Overview</CardTitle>
+  <CardText>
+    Percentage of Our Budget We have Spent: {budgetTotal}%
+  </CardText>
+  <ExpensePieChart budgetTotal={budgetTotal} />
+</Card>
     </Container>
   );
 }

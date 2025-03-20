@@ -21,6 +21,8 @@ public class FullStackCapstoneDbContext : IdentityDbContext<IdentityUser>
 
     public DbSet<Income> Incomes { get; set; }
 
+    public DbSet<CategoryBudget> CategoryBudgets { get; set; }
+
     public FullStackCapstoneDbContext(
         DbContextOptions<FullStackCapstoneDbContext> context,
         IConfiguration config

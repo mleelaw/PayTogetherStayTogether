@@ -15,6 +15,9 @@ public class Expense
     public decimal Amount { get; set; }
 
     [Required]
+    public int CategoryBudgetId { get; set; }
+
+    public CategoryBudget CategoryBudget { get; set; }
     public int CategoryId { get; set; }
 
     public Category Category { get; set; }
@@ -22,7 +25,7 @@ public class Expense
     [Required]
     [StringLength(50)]
     public string Description { get; set; }
-
+    [Required]
     public DateTime DateOfExpense { get; set; }
 
     public DateTime DateExpenseWasRecorded { get; } = DateTime.Now;

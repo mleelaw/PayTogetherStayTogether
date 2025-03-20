@@ -65,7 +65,7 @@ public class IncomeController : ControllerBase
             CreatedById = userProfile.Id,
             IsFavorite = income.IsFavorite,
             IsFrequent = income.IsFrequent,
-            FrequencyId = income.FrequencyId,
+            FrequencyId = income.FrequencyId != 0 ? income.FrequencyId : null,
             HouseholdId = householdId,
         };
 

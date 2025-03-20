@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { GetCategories, UpdateCategory } from "../../managers/categoryManager";
+
 import {
   Card,
   CardBody,
@@ -15,6 +16,7 @@ import {
   Row,
   Col,
 } from "reactstrap";
+import { GetRemainingBudgetByCategory } from "../../managers/categoryBudgetManger";
 
 export default function BudgetList({ setCurrentHouseholdId }) {
   const { householdId } = useParams();
@@ -23,9 +25,26 @@ export default function BudgetList({ setCurrentHouseholdId }) {
   const [editedBudget, setEditedBudget] = useState("");
   const [editedActive, setEditedActive] = useState(true);
   const [totalBudget, setTotalBudget] = useState(0);
+  const [remainingbudgets, setRemainingBudgets] = useState({
+    1: 0, // Rent
+    2: 0, // Groceries
+    3: 0, // PetExpense
+  });
 
   useEffect(() => {
     setCurrentHouseholdId(householdId);
+
+    GetRemainingBudgetByCategory(householdId).then((data) => {
+      const updatedBudgetsRemaining = { ...remainingbudgets };
+      data.forEach((categoryBudget) => {
+        if (updatedBudgetsRemaining.hasOwnProperty(categoryBudget.categoryId)) {
+          updatedBudgetsRemaining[categoryBudget.categoryId] =
+            categoryBudget.remainingBudget;
+        }
+      });
+      setRemainingBudgets(updatedBudgetsRemaining);
+    });
+
     GetCategories(householdId).then((data) => {
       setCategories(data.categories);
       setTotalBudget(data.totalBudget);
@@ -44,8 +63,9 @@ export default function BudgetList({ setCurrentHouseholdId }) {
       isActive: editedActive,
       categoryBudgetForTheMonth: parseFloat(editedBudget),
     };
-
-    UpdateCategory(categoryId, updatedCategory).then(() => {
+  
+    UpdateCategory(categoryId, householdId, updatedCategory).then(() => {
+      
       setCategories(
         categories.map((c) => {
           if (c.id === categoryId) {
@@ -58,6 +78,19 @@ export default function BudgetList({ setCurrentHouseholdId }) {
           return c;
         })
       );
+  
+      
+      GetRemainingBudgetByCategory(householdId).then((data) => {
+        const updatedBudgetsRemaining = { ...remainingbudgets };
+        data.forEach((categoryBudget) => {
+          if (updatedBudgetsRemaining.hasOwnProperty(categoryBudget.categoryId)) {
+            updatedBudgetsRemaining[categoryBudget.categoryId] =
+              categoryBudget.remainingBudget;
+          }
+        });
+        setRemainingBudgets(updatedBudgetsRemaining);
+      });
+  
 
       setEditingCategory(null);
     });
@@ -69,10 +102,15 @@ export default function BudgetList({ setCurrentHouseholdId }) {
 
   return (
     <Container>
-      <h2 className="text-center">Household Budget</h2>
+      <h1 className="text-center">Household Budget</h1>
+      <h2 className="text-center">
+  
+  {new Date().toLocaleString("default", { month: "long" })} {new Date().getFullYear()}
+</h2>
       <Card className="text-center">
         <CardBody>
           <CardTitle>Total Monthly Budget</CardTitle>
+         
           <CardText>${totalBudget.toFixed(2)}</CardText>
         </CardBody>
       </Card>
@@ -112,16 +150,17 @@ export default function BudgetList({ setCurrentHouseholdId }) {
                 ) : (
                   <>
                     <CardText>
-                      <h6>Budget: </h6>$
+                      <h6>Budget:</h6> $
                       {category.categoryBudgetForTheMonth?.toFixed(2) || "0.00"}
                     </CardText>
                     <CardText>
-                      <h6>Status: </h6>
-                      {category.isActive ? "Active" : "Inactive"}
+                      <h6>Remaining Budget:</h6> $
+                      {remainingbudgets[category.id]?.toFixed(2) || "0.00"}
                     </CardText>
-                    <Button onClick={() => handleEditClick(category)}>
-                      Edit
-                    </Button>
+                    <CardText>
+                      <h6>Status:</h6> {category.isActive ? "Active" : "Inactive"}
+                    </CardText>
+                    <Button onClick={() => handleEditClick(category)}>Edit</Button>
                   </>
                 )}
               </CardBody>

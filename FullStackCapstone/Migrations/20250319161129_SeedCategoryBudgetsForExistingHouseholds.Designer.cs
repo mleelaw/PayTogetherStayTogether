@@ -3,6 +3,7 @@ using System;
 using FullStackCapstone.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FullStackCapstone.Migrations
 {
     [DbContext(typeof(FullStackCapstoneDbContext))]
-    partial class FullStackCapstoneDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250319161129_SeedCategoryBudgetsForExistingHouseholds")]
+    partial class SeedCategoryBudgetsForExistingHouseholds
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -401,7 +404,7 @@ namespace FullStackCapstone.Migrations
                             Amount = 0.10m,
                             CreatedById = 2,
                             HouseholdId = 1,
-                            IncomeCreatedDate = new DateTime(2025, 3, 19, 14, 29, 23, 467, DateTimeKind.Local).AddTicks(3432),
+                            IncomeCreatedDate = new DateTime(2025, 3, 19, 11, 11, 28, 993, DateTimeKind.Local).AddTicks(5716),
                             IsFavorite = false,
                             IsFrequent = false,
                             Source = "Student"
@@ -413,7 +416,7 @@ namespace FullStackCapstone.Migrations
                             CreatedById = 3,
                             FrequencyId = 3,
                             HouseholdId = 1,
-                            IncomeCreatedDate = new DateTime(2025, 3, 19, 14, 29, 23, 467, DateTimeKind.Local).AddTicks(3441),
+                            IncomeCreatedDate = new DateTime(2025, 3, 19, 11, 11, 28, 993, DateTimeKind.Local).AddTicks(5748),
                             IsFavorite = true,
                             IsFrequent = true,
                             Source = "Work"
@@ -425,7 +428,7 @@ namespace FullStackCapstone.Migrations
                             CreatedById = 1,
                             FrequencyId = 3,
                             HouseholdId = 2,
-                            IncomeCreatedDate = new DateTime(2025, 3, 19, 14, 29, 23, 467, DateTimeKind.Local).AddTicks(3446),
+                            IncomeCreatedDate = new DateTime(2025, 3, 19, 11, 11, 28, 993, DateTimeKind.Local).AddTicks(5753),
                             IsFavorite = true,
                             IsFrequent = true,
                             Source = "Work"
@@ -618,13 +621,13 @@ namespace FullStackCapstone.Migrations
                         {
                             Id = "dbc40bc6-0829-4ac5-a3ed-180f5e916a5f",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "98112334-a214-491b-86d3-b65ac312fb1a",
+                            ConcurrencyStamp = "6e8c1645-21a9-4c7b-8168-e3cd8624a3ba",
                             Email = "admina@strator.comx",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAIAAYagAAAAEHtehsUqaCEZASRYyzTE2hwSqSjlt7znU4qALDugQAu3/HyAiZtCc91SSYsd0fycBQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEJWn1iNbUSwn3PQtVq7crABrIG/88eh2lsNFGc9Pdtj+cOGAbierhWUuiOZ2elth0w==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "ac941f91-e8cd-4c5d-b9da-945984e1f2da",
+                            SecurityStamp = "dfa7f6ab-8988-41f2-8232-572850b44921",
                             TwoFactorEnabled = false,
                             UserName = "Administrator"
                         },
@@ -632,13 +635,13 @@ namespace FullStackCapstone.Migrations
                         {
                             Id = "someOtherUserId123456789",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e8fe3d0e-c5df-4c73-be5e-6c60f8ee130e",
+                            ConcurrencyStamp = "f21e658f-4cb9-4d90-bec0-0a05f268a064",
                             Email = "mleelaw123@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAIAAYagAAAAEGC0dPphqZwbrEtakGnRNYFHbUIACoA12JgIgSRaoFSK1qogsfEkA9/sVKkC++r/tg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEJnwsSZCIFu9tzZLsPwvztNmuqcSC+YiZg+ciZMPeHE+A3778MT3n+88BBwA7A/tNw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "000adfcc-96cb-4ac2-9fef-ef4299e56440",
+                            SecurityStamp = "66212473-7aa0-4c93-be13-902cd49cc9a3",
                             TwoFactorEnabled = false,
                             UserName = "MLee"
                         },
@@ -646,13 +649,13 @@ namespace FullStackCapstone.Migrations
                         {
                             Id = "someOtherUserId123456788",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "dd3f7143-960c-48d8-87b4-0090c413d0eb",
+                            ConcurrencyStamp = "e3560697-02d3-463a-adca-62a44c077e2b",
                             Email = "maezell@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAIAAYagAAAAELMa3P7BCRVbSrpg/krtQt+K1Att4tPNJNQ7Gf1Gfe0i/dWDJSAZlf+cueHMyA3KIw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEOTE7vhMbDNVOsetzH9wEbpWjMIrQzx3muWSlcHr/aGPbOx7qMFsvGz0Zijnqn4WXQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "3f478912-11c9-4f02-bd4c-d103d52e858c",
+                            SecurityStamp = "d513feb9-b115-4780-926a-258dffed5e70",
                             TwoFactorEnabled = false,
                             UserName = "Abigail"
                         });

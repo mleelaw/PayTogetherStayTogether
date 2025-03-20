@@ -3,6 +3,7 @@ using System;
 using FullStackCapstone.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FullStackCapstone.Migrations
 {
     [DbContext(typeof(FullStackCapstoneDbContext))]
-    partial class FullStackCapstoneDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250318213104_added categorybudget model and updated db context")]
+    partial class addedcategorybudgetmodelandupdateddbcontext
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -76,9 +79,6 @@ namespace FullStackCapstone.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CategoryId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("HouseholdId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("Month")
@@ -401,7 +401,7 @@ namespace FullStackCapstone.Migrations
                             Amount = 0.10m,
                             CreatedById = 2,
                             HouseholdId = 1,
-                            IncomeCreatedDate = new DateTime(2025, 3, 19, 14, 29, 23, 467, DateTimeKind.Local).AddTicks(3432),
+                            IncomeCreatedDate = new DateTime(2025, 3, 18, 16, 31, 3, 690, DateTimeKind.Local).AddTicks(5102),
                             IsFavorite = false,
                             IsFrequent = false,
                             Source = "Student"
@@ -413,7 +413,7 @@ namespace FullStackCapstone.Migrations
                             CreatedById = 3,
                             FrequencyId = 3,
                             HouseholdId = 1,
-                            IncomeCreatedDate = new DateTime(2025, 3, 19, 14, 29, 23, 467, DateTimeKind.Local).AddTicks(3441),
+                            IncomeCreatedDate = new DateTime(2025, 3, 18, 16, 31, 3, 690, DateTimeKind.Local).AddTicks(5110),
                             IsFavorite = true,
                             IsFrequent = true,
                             Source = "Work"
@@ -425,7 +425,7 @@ namespace FullStackCapstone.Migrations
                             CreatedById = 1,
                             FrequencyId = 3,
                             HouseholdId = 2,
-                            IncomeCreatedDate = new DateTime(2025, 3, 19, 14, 29, 23, 467, DateTimeKind.Local).AddTicks(3446),
+                            IncomeCreatedDate = new DateTime(2025, 3, 18, 16, 31, 3, 690, DateTimeKind.Local).AddTicks(5115),
                             IsFavorite = true,
                             IsFrequent = true,
                             Source = "Work"
@@ -618,13 +618,13 @@ namespace FullStackCapstone.Migrations
                         {
                             Id = "dbc40bc6-0829-4ac5-a3ed-180f5e916a5f",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "98112334-a214-491b-86d3-b65ac312fb1a",
+                            ConcurrencyStamp = "3b30cb9c-4952-47f4-b80c-8e69a5e4102d",
                             Email = "admina@strator.comx",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAIAAYagAAAAEHtehsUqaCEZASRYyzTE2hwSqSjlt7znU4qALDugQAu3/HyAiZtCc91SSYsd0fycBQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEIjCQh00di7rVp/nWU3v/mlZCJxGPWADhLwSXfM0E6Z/q7B5Je0aBGHo8pdG91dOaA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "ac941f91-e8cd-4c5d-b9da-945984e1f2da",
+                            SecurityStamp = "2bbd0af4-9391-4fbc-9f0f-bf53c9967b10",
                             TwoFactorEnabled = false,
                             UserName = "Administrator"
                         },
@@ -632,13 +632,13 @@ namespace FullStackCapstone.Migrations
                         {
                             Id = "someOtherUserId123456789",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e8fe3d0e-c5df-4c73-be5e-6c60f8ee130e",
+                            ConcurrencyStamp = "1bb17685-c423-4e04-9d49-6e1432e2ef7a",
                             Email = "mleelaw123@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAIAAYagAAAAEGC0dPphqZwbrEtakGnRNYFHbUIACoA12JgIgSRaoFSK1qogsfEkA9/sVKkC++r/tg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEMtm5gX1/k/Ig2guiiH1OjN3VPuT33x2A4nWMzAbU2qY6puwez3lpbOFdWoD5vXFAg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "000adfcc-96cb-4ac2-9fef-ef4299e56440",
+                            SecurityStamp = "95584157-f00f-42ce-9b09-2828efedc4f4",
                             TwoFactorEnabled = false,
                             UserName = "MLee"
                         },
@@ -646,13 +646,13 @@ namespace FullStackCapstone.Migrations
                         {
                             Id = "someOtherUserId123456788",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "dd3f7143-960c-48d8-87b4-0090c413d0eb",
+                            ConcurrencyStamp = "49e1ccb8-e7f8-4ca2-a7dd-722694eeb749",
                             Email = "maezell@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAIAAYagAAAAELMa3P7BCRVbSrpg/krtQt+K1Att4tPNJNQ7Gf1Gfe0i/dWDJSAZlf+cueHMyA3KIw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKS+gcVXOM7iBrYKqkS0no7PLScpWiET8MWirtQSgjX8ZLrV87i/63zYu0kjT6AwgA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "3f478912-11c9-4f02-bd4c-d103d52e858c",
+                            SecurityStamp = "d013de5a-8a16-49e6-bbb5-5bf6d65d08f1",
                             TwoFactorEnabled = false,
                             UserName = "Abigail"
                         });

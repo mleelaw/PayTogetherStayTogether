@@ -106,15 +106,21 @@ public class HouseholdController : ControllerBase
     [Authorize]
     public IActionResult GetExpensesForDashboard([FromRoute] int householdId)
     {
-
         var householdIdCheck = _dbContext.Households.SingleOrDefault(h => h.Id == householdId);
         if (householdIdCheck == null)
         {
             return NotFound();
         }
 
+        var currentMonth = DateTime.Now.Month;
+        var currentYear = DateTime.Now.Year;
+
         var userExpenseTotals = _dbContext
-            .Expenses.Where(e => e.HouseholdId == householdId)
+            .Expenses.Where(e =>
+                e.HouseholdId == householdId
+                && e.DateOfExpense.Month == currentMonth
+                && e.DateOfExpense.Year == currentYear
+            )
             .GroupBy(e => e.PurchasedByUserId)
             .Select(group => new
             {
@@ -128,9 +134,12 @@ public class HouseholdController : ControllerBase
             })
             .ToList();
 
-
         var userIncomeTotals = _dbContext
-            .Incomes.Where(i => i.HouseholdId == householdId)
+            .Incomes.Where(i =>
+                i.HouseholdId == householdId
+                && i.IncomeCreatedDate.Month == currentMonth
+                && i.IncomeCreatedDate.Year == currentYear
+            )
             .GroupBy(i => i.CreatedById)
             .Select(group => new
             {
@@ -144,24 +153,28 @@ public class HouseholdController : ControllerBase
             })
             .ToList();
 
-
         decimal householdTotalExpense = _dbContext
-            .Expenses.Where(e => e.HouseholdId == householdId)
+            .Expenses.Where(e =>
+                e.HouseholdId == householdId
+                && e.DateOfExpense.Month == currentMonth
+                && e.DateOfExpense.Year == currentYear
+            )
             .Sum(e => e.Amount);
 
-
         decimal householdTotalIncome = _dbContext
-            .Incomes.Where(i => i.HouseholdId == householdId)
+            .Incomes.Where(i =>
+                i.HouseholdId == householdId
+                && i.IncomeCreatedDate.Month == currentMonth
+                && i.IncomeCreatedDate.Year == currentYear
+            )
             .Sum(i => i.Amount);
-
 
         Household household = _dbContext.Households.SingleOrDefault(h => h.Id == householdId);
         var householdName = new HouseholdNameDTO { Id = household.Id, Name = household.Name };
 
-
         decimal activeCategoryTotalBudget = _dbContext
-            .Categories.Where(c => c.IsActive == true)
-            .Sum(c => c.CategoryBudgetForTheMonth ?? 0m);
+            .CategoryBudgets.Where(cb => cb.HouseholdId == householdId)
+            .Sum(cb => cb.Category.CategoryBudgetForTheMonth ?? 0m);
 
         decimal budgetPercentageUsed = 0;
         if (activeCategoryTotalBudget > 0)
@@ -208,8 +221,6 @@ public class HouseholdController : ControllerBase
                 var userProfile = _dbContext.UserProfiles.SingleOrDefault(up =>
                     up.IdentityUserId == identityUserId
                 );
-                if (userProfile == null)
-                    return Unauthorized();
 
                 householdAddition = new Household
                 {
@@ -220,14 +231,30 @@ public class HouseholdController : ControllerBase
                 _dbContext.Households.Add(householdAddition);
                 _dbContext.SaveChanges();
 
-                HouseholdUser addUserTonewHouse = new HouseholdUser
+                HouseholdUser addUserToNewHouse = new HouseholdUser
                 {
                     HouseholdId = householdAddition.Id,
                     UserProfileId = userProfile.Id,
                     IsAdmin = true,
                 };
 
-                _dbContext.HouseholdUsers.Add(addUserTonewHouse);
+                _dbContext.HouseholdUsers.Add(addUserToNewHouse);
+                _dbContext.SaveChanges();
+
+                var categories = _dbContext.Categories.Where(c => c.IsActive).ToList();
+
+                foreach (var category in categories)
+                {
+                    var categoryBudget = new CategoryBudget
+                    {
+                        HouseholdId = householdAddition.Id,
+                        CategoryId = category.Id,
+                        Month = DateTime.Now,
+                        RemainingBudget = category.CategoryBudgetForTheMonth ?? 0m,
+                    };
+
+                    _dbContext.CategoryBudgets.Add(categoryBudget);
+                }
                 _dbContext.SaveChanges();
 
                 transaction.Commit();

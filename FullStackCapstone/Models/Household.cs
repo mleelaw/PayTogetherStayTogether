@@ -22,6 +22,8 @@ public class Household
 
     public List<Expense> Expenses { get; set; } = new List<Expense>();
 
+    public List<CategoryBudget> CategoryBudgets { get; set; } = new List<CategoryBudget>();
+
     public List<Income> Incomes { get; set; } = new List<Income>();
     public decimal TotalOfExpenses()
     {
