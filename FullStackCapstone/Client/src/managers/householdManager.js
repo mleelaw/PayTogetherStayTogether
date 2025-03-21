@@ -1,4 +1,4 @@
-const _apiUrl = "/api/household";
+const _apiUrl = "/api/households";
 
 export const getUserHouseholds = () => {
   return fetch(`${_apiUrl}`).then((response) => {
@@ -21,8 +21,11 @@ export const getAvailableUserHouseholds = () => {
     return response.json();
   });
 };
+
 export const getExpenseTotalAmount = (householdId) => {
-  return fetch(`${_apiUrl}/${householdId}`).then((response) => response.json());
+  return fetch(`/api/households/${householdId}`).then((response) =>
+    response.json()
+  );
 };
 
 export const getAllHouseholds = () => {

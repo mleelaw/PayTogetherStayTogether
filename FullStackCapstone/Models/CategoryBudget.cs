@@ -24,16 +24,19 @@ public class CategoryBudget
     [Required]
     public decimal RemainingBudget { get; set; }
 
-    // Navigation properties
     public Category Category { get; set; }
     public Household Household { get; set; }
 
     public List<Expense> Expenses { get; set; } = new List<Expense>();
 
-    // Constructors and methods
     public CategoryBudget() { }
 
-    public CategoryBudget(Category category, Household household, DateTime month, decimal budgetAmount = 0)
+    public CategoryBudget(
+        Category category,
+        Household household,
+        DateTime month,
+        decimal budgetAmount = 0
+    )
     {
         CategoryId = category.Id;
         HouseholdId = household.Id;

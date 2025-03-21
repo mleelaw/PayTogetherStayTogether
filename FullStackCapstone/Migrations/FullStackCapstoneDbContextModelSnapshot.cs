@@ -30,12 +30,6 @@ namespace FullStackCapstone.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal?>("CategoryBudgetForTheMonth")
-                        .HasColumnType("numeric");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
@@ -47,22 +41,16 @@ namespace FullStackCapstone.Migrations
                         new
                         {
                             Id = 1,
-                            CategoryBudgetForTheMonth = 2000.00m,
-                            IsActive = true,
                             Name = "Rent"
                         },
                         new
                         {
                             Id = 2,
-                            CategoryBudgetForTheMonth = 1000.00m,
-                            IsActive = true,
                             Name = "Groceries"
                         },
                         new
                         {
                             Id = 3,
-                            CategoryBudgetForTheMonth = 150.00m,
-                            IsActive = true,
                             Name = "Pet Expenses"
                         });
                 });
@@ -75,11 +63,17 @@ namespace FullStackCapstone.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<decimal>("BudgetAmount")
+                        .HasColumnType("numeric");
+
                     b.Property<int>("CategoryId")
                         .HasColumnType("integer");
 
                     b.Property<int>("HouseholdId")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime>("Month")
                         .HasColumnType("timestamp without time zone");
@@ -91,7 +85,51 @@ namespace FullStackCapstone.Migrations
 
                     b.HasIndex("CategoryId");
 
+                    b.HasIndex("HouseholdId");
+
                     b.ToTable("CategoryBudgets");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BudgetAmount = 2000.00m,
+                            CategoryId = 1,
+                            HouseholdId = 1,
+                            IsActive = true,
+                            Month = new DateTime(2023, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RemainingBudget = 100.00m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            BudgetAmount = 1000.00m,
+                            CategoryId = 2,
+                            HouseholdId = 1,
+                            IsActive = true,
+                            Month = new DateTime(2023, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RemainingBudget = 967.00m
+                        },
+                        new
+                        {
+                            Id = 3,
+                            BudgetAmount = 150.00m,
+                            CategoryId = 3,
+                            HouseholdId = 1,
+                            IsActive = true,
+                            Month = new DateTime(2023, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RemainingBudget = 114.00m
+                        },
+                        new
+                        {
+                            Id = 4,
+                            BudgetAmount = 2000.00m,
+                            CategoryId = 1,
+                            HouseholdId = 2,
+                            IsActive = true,
+                            Month = new DateTime(2023, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            RemainingBudget = 100.00m
+                        });
                 });
 
             modelBuilder.Entity("FullStackCapstone.Models.Expense", b =>
@@ -104,6 +142,9 @@ namespace FullStackCapstone.Migrations
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("numeric");
+
+                    b.Property<int?>("CategoryBudgetId")
+                        .HasColumnType("integer");
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("integer");
@@ -133,6 +174,8 @@ namespace FullStackCapstone.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CategoryBudgetId");
+
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("FrequencyId");
@@ -142,59 +185,6 @@ namespace FullStackCapstone.Migrations
                     b.HasIndex("PurchasedByUserId");
 
                     b.ToTable("Expenses");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Amount = 36.00m,
-                            CategoryId = 3,
-                            DateOfExpense = new DateTime(2023, 3, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Nail Trim at Belmont Animal Hospital",
-                            FrequencyId = 5,
-                            HouseholdId = 1,
-                            IsFavorite = true,
-                            IsRecurring = true,
-                            PurchasedByUserId = 2
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Amount = 33.00m,
-                            CategoryId = 2,
-                            DateOfExpense = new DateTime(2023, 3, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "WaffleHouse",
-                            HouseholdId = 1,
-                            IsFavorite = false,
-                            IsRecurring = false,
-                            PurchasedByUserId = 3
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Amount = 1900m,
-                            CategoryId = 1,
-                            DateOfExpense = new DateTime(2023, 3, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Rent",
-                            FrequencyId = 4,
-                            HouseholdId = 1,
-                            IsFavorite = true,
-                            IsRecurring = true,
-                            PurchasedByUserId = 3
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Amount = 1900m,
-                            CategoryId = 1,
-                            DateOfExpense = new DateTime(2023, 3, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Rent",
-                            FrequencyId = 4,
-                            HouseholdId = 2,
-                            IsFavorite = true,
-                            IsRecurring = true,
-                            PurchasedByUserId = 1
-                        });
                 });
 
             modelBuilder.Entity("FullStackCapstone.Models.Frequency", b =>
@@ -401,7 +391,7 @@ namespace FullStackCapstone.Migrations
                             Amount = 0.10m,
                             CreatedById = 2,
                             HouseholdId = 1,
-                            IncomeCreatedDate = new DateTime(2025, 3, 19, 14, 29, 23, 467, DateTimeKind.Local).AddTicks(3432),
+                            IncomeCreatedDate = new DateTime(2025, 3, 20, 12, 0, 0, 887, DateTimeKind.Local).AddTicks(68),
                             IsFavorite = false,
                             IsFrequent = false,
                             Source = "Student"
@@ -413,7 +403,7 @@ namespace FullStackCapstone.Migrations
                             CreatedById = 3,
                             FrequencyId = 3,
                             HouseholdId = 1,
-                            IncomeCreatedDate = new DateTime(2025, 3, 19, 14, 29, 23, 467, DateTimeKind.Local).AddTicks(3441),
+                            IncomeCreatedDate = new DateTime(2025, 3, 20, 12, 0, 0, 887, DateTimeKind.Local).AddTicks(79),
                             IsFavorite = true,
                             IsFrequent = true,
                             Source = "Work"
@@ -425,7 +415,7 @@ namespace FullStackCapstone.Migrations
                             CreatedById = 1,
                             FrequencyId = 3,
                             HouseholdId = 2,
-                            IncomeCreatedDate = new DateTime(2025, 3, 19, 14, 29, 23, 467, DateTimeKind.Local).AddTicks(3446),
+                            IncomeCreatedDate = new DateTime(2025, 3, 20, 12, 0, 0, 887, DateTimeKind.Local).AddTicks(89),
                             IsFavorite = true,
                             IsFrequent = true,
                             Source = "Work"
@@ -618,13 +608,13 @@ namespace FullStackCapstone.Migrations
                         {
                             Id = "dbc40bc6-0829-4ac5-a3ed-180f5e916a5f",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "98112334-a214-491b-86d3-b65ac312fb1a",
+                            ConcurrencyStamp = "f8c746bd-d457-4ead-9a50-0e42b4ce427f",
                             Email = "admina@strator.comx",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAIAAYagAAAAEHtehsUqaCEZASRYyzTE2hwSqSjlt7znU4qALDugQAu3/HyAiZtCc91SSYsd0fycBQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHVUD2LYGTFwMIhbWPQv5rdk9vtLthp0wgi7yTLHxuqJEfDdvRFeclna2cHAh4RQAw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "ac941f91-e8cd-4c5d-b9da-945984e1f2da",
+                            SecurityStamp = "351541a9-5ee9-4d23-afbf-2c0c757ea4d2",
                             TwoFactorEnabled = false,
                             UserName = "Administrator"
                         },
@@ -632,13 +622,13 @@ namespace FullStackCapstone.Migrations
                         {
                             Id = "someOtherUserId123456789",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e8fe3d0e-c5df-4c73-be5e-6c60f8ee130e",
+                            ConcurrencyStamp = "9d024f6f-fe32-4910-bbbc-9a6b221944f4",
                             Email = "mleelaw123@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAIAAYagAAAAEGC0dPphqZwbrEtakGnRNYFHbUIACoA12JgIgSRaoFSK1qogsfEkA9/sVKkC++r/tg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAELDn0tvcvfYZEumayLko3QUXAAh53afrOzvSGxljHgyu5B5MCjXhG/tSolTj9FiBXg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "000adfcc-96cb-4ac2-9fef-ef4299e56440",
+                            SecurityStamp = "c1c29735-d32d-4d80-b39c-e2b0ed8923de",
                             TwoFactorEnabled = false,
                             UserName = "MLee"
                         },
@@ -646,13 +636,13 @@ namespace FullStackCapstone.Migrations
                         {
                             Id = "someOtherUserId123456788",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "dd3f7143-960c-48d8-87b4-0090c413d0eb",
+                            ConcurrencyStamp = "78f56704-1890-4646-9184-8d6e02a0ab48",
                             Email = "maezell@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAIAAYagAAAAELMa3P7BCRVbSrpg/krtQt+K1Att4tPNJNQ7Gf1Gfe0i/dWDJSAZlf+cueHMyA3KIw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAELQfmzStBuAIMT0c7dh6s9oGv+1+aUdPbekRaseR59mZqLtkRjupNdeWIO2zljmn4g==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "3f478912-11c9-4f02-bd4c-d103d52e858c",
+                            SecurityStamp = "1e15d55c-19b5-408a-a1cf-21c363a0ecee",
                             TwoFactorEnabled = false,
                             UserName = "Abigail"
                         });
@@ -759,16 +749,28 @@ namespace FullStackCapstone.Migrations
             modelBuilder.Entity("FullStackCapstone.Models.CategoryBudget", b =>
                 {
                     b.HasOne("FullStackCapstone.Models.Category", "Category")
-                        .WithMany()
+                        .WithMany("CategoryBudgets")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("FullStackCapstone.Models.Household", "Household")
+                        .WithMany("CategoryBudgets")
+                        .HasForeignKey("HouseholdId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Category");
+
+                    b.Navigation("Household");
                 });
 
             modelBuilder.Entity("FullStackCapstone.Models.Expense", b =>
                 {
+                    b.HasOne("FullStackCapstone.Models.CategoryBudget", "CategoryBudget")
+                        .WithMany("Expenses")
+                        .HasForeignKey("CategoryBudgetId");
+
                     b.HasOne("FullStackCapstone.Models.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
@@ -792,6 +794,8 @@ namespace FullStackCapstone.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
+
+                    b.Navigation("CategoryBudget");
 
                     b.Navigation("Frequency");
 
@@ -915,8 +919,20 @@ namespace FullStackCapstone.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("FullStackCapstone.Models.Category", b =>
+                {
+                    b.Navigation("CategoryBudgets");
+                });
+
+            modelBuilder.Entity("FullStackCapstone.Models.CategoryBudget", b =>
+                {
+                    b.Navigation("Expenses");
+                });
+
             modelBuilder.Entity("FullStackCapstone.Models.Household", b =>
                 {
+                    b.Navigation("CategoryBudgets");
+
                     b.Navigation("Expenses");
 
                     b.Navigation("HouseholdUsers");

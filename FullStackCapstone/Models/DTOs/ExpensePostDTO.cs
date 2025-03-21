@@ -15,7 +15,7 @@ public class ExpensePostDTO
     public string Description { get; set; }
 
     public DateTime DateOfExpense { get; set; }
-
+    public int? CategoryBudgetId { get; set; }
     public int PurchasedByUserId { get; set; }
 
     public bool IsRecurring { get; set; } = false;

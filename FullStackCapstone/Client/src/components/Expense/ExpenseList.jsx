@@ -60,88 +60,102 @@ export default function ExpenseList({ setCurrentHouseholdId, loggedInUser }) {
   };
 
   return (
-    <Container className="text-center">
-      <h3>Expense List</h3>
-
-      <Dropdown
-        isOpen={dropdownYearOpen}
-        toggle={() => setDropdownYearOpen(!dropdownYearOpen)}
-      >
-        <DropdownToggle caret>
-          {yearFilter ? `Year: ${yearFilter}` : "Select Year"}
-        </DropdownToggle>
-        <DropdownMenu>
-          <DropdownItem
-            onClick={() => {
-              setYearFilter(null);
-              setDropdownYearOpen(false);
-            }}
-          >
-            All Years
-          </DropdownItem>
-          {years.map((year) => (
+    <Container className="text-center py-5">
+      <h1 className="mb-5">Expense List</h1>
+      
+      <div className="d-flex justify-content-center mb-4">
+        <Dropdown
+          isOpen={dropdownYearOpen}
+          toggle={() => setDropdownYearOpen(!dropdownYearOpen)}
+          className="me-3"
+        >
+          <DropdownToggle caret className="bg-dark text-white px-3 py-1">
+            {yearFilter ? `Year: ${yearFilter}` : "Select Year"}
+          </DropdownToggle>
+          <DropdownMenu>
             <DropdownItem
-              key={year}
               onClick={() => {
-                setYearFilter(year);
+                setYearFilter(null);
                 setDropdownYearOpen(false);
               }}
             >
-              {year}
+              All Years
             </DropdownItem>
-          ))}
-        </DropdownMenu>
-      </Dropdown>
-
-       <Dropdown
-        isOpen={dropdownMonthOpen}
-        toggle={() => setDropdownMonthOpen(!dropdownMonthOpen)}
-      >
-        <DropdownToggle caret>
-          {monthFilter ? `Month: ${months.find((m) => m.value === monthFilter)?.label}` : "Select Month"}
-        </DropdownToggle>
-        <DropdownMenu>
-          <DropdownItem
-            onClick={() => {
-              setMonthFilter(null);
-              setDropdownMonthOpen(false);
-            }}
-          >
-            All Months
-          </DropdownItem>
-          {months.map((month) => (
-  <DropdownItem
-    key={month.value}
-    onClick={() => setMonthFilter(month.value)}
-  >
-    {month.label}
-  </DropdownItem>
-))}
-        </DropdownMenu>
-      </Dropdown>
-
-      {expenses.map((e) => (
-        <Card key={e.id} className="text-center">
-          <CardTitle>{formatDate(e.dateOfExpense)}</CardTitle>
-          <CardText>
-            ${e.amount} - {e.category?.name} - {e.description}
-            {e.isRecurring ? " - Recurring Payment" : " - One-time Payment"}
-            {e.frequency && ` (${e.frequency.description})`}
-          </CardText>
-          {e.purchasedByUserId === loggedInUser.id && (
-            <div>
-              <Button onClick={() => handleDeleteExpense(e.id)}>Delete</Button>
-              <Button
-                onClick={() =>
-                  navigate(`/household/${householdId}/expense/create/${e.id}`)
-                }
+            {years.map((year) => (
+              <DropdownItem
+                key={year}
+                onClick={() => {
+                  setYearFilter(year);
+                  setDropdownYearOpen(false);
+                }}
               >
-                Edit
-              </Button>
-            </div>
-          )}
-        </Card>
-      ))}
+                {year}
+              </DropdownItem>
+            ))}
+          </DropdownMenu>
+        </Dropdown>
+
+        <Dropdown
+          isOpen={dropdownMonthOpen}
+          toggle={() => setDropdownMonthOpen(!dropdownMonthOpen)}
+        >
+          <DropdownToggle caret className="bg-dark text-white px-3 py-1">
+            {monthFilter ? `Month: ${months.find((m) => m.value === monthFilter)?.label}` : "Select Month"}
+          </DropdownToggle>
+          <DropdownMenu>
+            <DropdownItem
+              onClick={() => {
+                setMonthFilter(null);
+                setDropdownMonthOpen(false);
+              }}
+            >
+              All Months
+            </DropdownItem>
+            {months.map((month) => (
+              <DropdownItem
+                key={month.value}
+                onClick={() => setMonthFilter(month.value)}
+              >
+                {month.label}
+              </DropdownItem>
+            ))}
+          </DropdownMenu>
+        </Dropdown>
+      </div>
+
+      <div className="row justify-content-center">
+        {expenses.map((e) => (
+          <div key={e.id} className="col-md-8 mb-3">
+            <Card className="shadow p-3">
+              <CardTitle className="h4">{formatDate(e.dateOfExpense)}</CardTitle>
+              <CardText className="h5">
+                ${e.amount} - {e.category?.name} - {e.description}
+                {e.isRecurring ? " - Recurring Payment" : " - One-time Payment"}
+                {e.frequency && ` (${e.frequency.description})`}
+              </CardText>
+              {e.purchasedByUserId === loggedInUser.id && (
+                <div className="d-flex justify-content-center">
+                  <Button 
+                    color="dark" 
+                    className="me-2"
+                    onClick={() => handleDeleteExpense(e.id)}
+                  >
+                    Delete
+                  </Button>
+                  <Button
+                    color="dark"
+                    onClick={() =>
+                      navigate(`/household/${householdId}/expense/create/${e.id}`)
+                    }
+                  >
+                    Edit
+                  </Button>
+                </div>
+              )}
+            </Card>
+          </div>
+        ))}
+      </div>
     </Container>
   );
 }

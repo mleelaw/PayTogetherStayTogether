@@ -14,10 +14,10 @@ public class Expense
     [Required]
     public decimal Amount { get; set; }
 
-    [Required]
-    public int CategoryBudgetId { get; set; }
 
-    public CategoryBudget CategoryBudget { get; set; }
+    public int? CategoryBudgetId { get; set; }
+
+    public CategoryBudget? CategoryBudget { get; set; }
     public int CategoryId { get; set; }
 
     public Category Category { get; set; }

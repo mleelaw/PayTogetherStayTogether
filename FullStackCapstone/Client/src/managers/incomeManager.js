@@ -17,7 +17,7 @@ export const DeleteIncome = (householdId, incomeid) => {
 export const GetIncomes = (householdId, month, year) => {
   let _apiUrl = `/api/household/${householdId}/income`;
 
-  const params = new URLSearchParams(); //builtin js class
+  const params = new URLSearchParams();
   if (month !== null && month !== undefined) params.append("month", month);
   if (year !== null && year !== undefined) params.append("year", year);
 

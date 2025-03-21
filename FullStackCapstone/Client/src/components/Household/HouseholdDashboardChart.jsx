@@ -1,14 +1,16 @@
-// src/components/Chart/ExpensePieChart.js
 import React from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 
 export default function ExpensePieChart({ budgetTotal }) {
+  const usedPercentage = Math.min(budgetTotal, 100);
+  const remainingPercentage = Math.max(0, 100 - usedPercentage);
+  
   const data = [
-    { name: "Used Budget", value: budgetTotal },
-    { name: "Remaining Budget", value: 100 - budgetTotal },
+    { name: "Used Budget", value: usedPercentage },
+    { name: "Remaining Budget", value: remainingPercentage },
   ];
 
-  const COLORS = ["#FF6384", "#36A2EB"]; // Customize colors as needed
+  const COLORS = ["#E03428", "#1A46DB"];
 
   return (
     <PieChart width={400} height={400}>
@@ -19,7 +21,6 @@ export default function ExpensePieChart({ budgetTotal }) {
         outerRadius={150}
         fill="#8884d8"
         dataKey="value"
-        label
       >
         {data.map((entry, index) => (
           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />

@@ -5,7 +5,6 @@ public class Category
     public int Id { get; set; }
     public string Name { get; set; }
 
-    // Navigation property for the many-to-many relationship
     public List<CategoryBudget> CategoryBudgets { get; set; } = new List<CategoryBudget>();
     public static readonly int RentId = 1;
     public static readonly int GroceriesId = 2;
@@ -15,7 +14,6 @@ public class Category
     public static readonly string Groceries = "Groceries";
     public static readonly string PetExpenses = "Pet Expenses";
 
-    // Keep your predefined categories method
     public static IEnumerable<Category> GetPredefinedCategories()
     {
         return new[]
@@ -26,4 +24,3 @@ public class Category
         };
     }
 }
-

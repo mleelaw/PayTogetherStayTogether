@@ -1,4 +1,5 @@
 using FullStackCapstone.Data;
+using FullStackCapstone.Models;
 using FullStackCapstone.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace FullStackCapstone.Controllers;
 
 [ApiController]
-[Route("api/category")]
+[Route("api/household/{householdId}/category")]
 public class CategoryController : ControllerBase
 {
     private FullStackCapstoneDbContext _dbContext;
@@ -16,98 +17,110 @@ public class CategoryController : ControllerBase
     {
         _dbContext = context;
     }
+
+    [HttpGet]
+    [Authorize]
+    public IActionResult GetCategories([FromRoute] int householdId)
+    {
+        try
+        {
+            var predefinedCategories = Category.GetPredefinedCategories().ToList();
+            var currentMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            var existingBudgets = _dbContext.CategoryBudgets
+     .Where(cb =>
+         cb.HouseholdId == householdId &&
+         cb.Month.Year == currentMonth.Year &&
+         cb.Month.Month == currentMonth.Month &&
+         cb.Month.Day == 1)
+     .Include(cb => cb.Category)
+     .ToList();
+
+
+            var categories = existingBudgets.Select(cb => new
+            {
+                id = cb.Category.Id,
+                name = cb.Category.Name,
+                isActive = cb.IsActive,
+                categoryBudgetForTheMonth = cb.BudgetAmount
+            }).ToList();
+
+            decimal totalBudget = existingBudgets
+                .Where(cb => cb.IsActive)
+                .Sum(cb => cb.BudgetAmount);
+
+            return Ok(new { categories, totalBudget });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Error getting categories: {ex.Message}");
+        }
+    }
+
     [HttpPut("{categoryId}")]
     [Authorize]
     public IActionResult UpdateCategory(
-    [FromRoute] int categoryId,
-    [FromQuery] int householdId,
-    [FromBody] CategoryUpdateDTO categoryDto
-)
+      [FromRoute] int categoryId,
+      [FromRoute] int householdId,
+      [FromBody] CategoryUpdateDTO categoryDto)
     {
-        // Verify the category exists
-        var category = _dbContext.Categories.Find(categoryId);
-        if (category == null)
-            return NotFound("Category not found");
+        using var transaction = _dbContext.Database.BeginTransaction();
 
-        // Verify the household exists
-        var household = _dbContext.Households.Find(householdId);
-        if (household == null)
-            return NotFound("Household not found");
-
-        // Find all category budgets for this category and household
-        var categoryBudgets = _dbContext.CategoryBudgets
-            .Where(cb => cb.CategoryId == categoryId && cb.HouseholdId == householdId)
-            .ToList();
-
-        // If no budgets exist yet for the current month, create one
-        var currentMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-        var currentMonthBudget = categoryBudgets.FirstOrDefault(cb =>
-            cb.Month.Year == currentMonth.Year && cb.Month.Month == currentMonth.Month);
-
-        if (currentMonthBudget == null)
+        try
         {
-            currentMonthBudget = new CategoryBudget
+            var category = _dbContext.Categories.Find(categoryId);
+            if (category == null)
+                return NotFound("Category not found");
+
+            var currentMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            var currentMonthBudget = _dbContext.CategoryBudgets.FirstOrDefault(cb =>
+                cb.CategoryId == categoryId &&
+                cb.HouseholdId == householdId &&
+                cb.Month.Year == currentMonth.Year &&
+                cb.Month.Month == currentMonth.Month &&
+                cb.Month.Day == 1);
+
+            if (currentMonthBudget == null)
             {
-                CategoryId = categoryId,
-                HouseholdId = householdId,
-                Month = currentMonth,
-                BudgetAmount = categoryDto.BudgetAmount ?? 0m,
-                RemainingBudget = categoryDto.BudgetAmount ?? 0m,
-                IsActive = categoryDto.IsActive
-            };
-            _dbContext.CategoryBudgets.Add(currentMonthBudget);
-            categoryBudgets.Add(currentMonthBudget);
+                currentMonthBudget = new CategoryBudget
+                {
+                    CategoryId = categoryId,
+                    HouseholdId = householdId,
+                    Month = currentMonth,
+                    BudgetAmount = categoryDto.BudgetAmount ?? 0m,
+                    RemainingBudget = categoryDto.BudgetAmount ?? 0m,
+                    IsActive = categoryDto.IsActive,
+                };
+                _dbContext.CategoryBudgets.Add(currentMonthBudget);
+            }
+            else
+            {
+                decimal budgetDifference = (categoryDto.BudgetAmount ?? 0) - currentMonthBudget.BudgetAmount;
+                currentMonthBudget.IsActive = categoryDto.IsActive;
+                currentMonthBudget.BudgetAmount = categoryDto.BudgetAmount ?? 0m;
+                currentMonthBudget.RemainingBudget += budgetDifference;
+            }
+
+            _dbContext.SaveChanges();
+            transaction.Commit();
+
+            return Ok(currentMonthBudget);
         }
-        else
+        catch (Exception ex)
         {
-            // Update current month's budget
-            currentMonthBudget.IsActive = categoryDto.IsActive;
-            currentMonthBudget.BudgetAmount = categoryDto.BudgetAmount ?? 0m;
-
-            // Recalculate remaining budget
-            var totalExpenses = _dbContext.Expenses
-                .Where(e =>
-                    e.CategoryBudgetId == currentMonthBudget.Id ||
-                    (e.CategoryId == categoryId && e.HouseholdId == householdId &&
-                    e.DateOfExpense.Month == currentMonth.Month &&
-                    e.DateOfExpense.Year == currentMonth.Year)
-                )
-                .Sum(e => e.Amount);
-
-            currentMonthBudget.RemainingBudget = currentMonthBudget.BudgetAmount - totalExpenses;
+            transaction.Rollback();
+            return StatusCode(500, $"Error updating category: {ex.Message}");
         }
-
-        // If the category name has changed, update it in the base category
-        if (category.Name != categoryDto.Name)
-        {
-            category.Name = categoryDto.Name;
-        }
-
-        _dbContext.SaveChanges();
-
-        // Return the updated category with household-specific settings
-        var result = new CategoryBudgetDTO
-        {
-            CategoryId = category.Id,
-            CategoryName = category.Name,
-            IsActive = currentMonthBudget.IsActive,
-            BudgetAmount = currentMonthBudget.BudgetAmount,
-            RemainingBudget = currentMonthBudget.RemainingBudget,
-            TotalExpenses = currentMonthBudget.BudgetAmount - currentMonthBudget.RemainingBudget,
-            Month = currentMonth
-        };
-
-        return Ok(result);
     }
-    [HttpGet]
+    [HttpGet("remaining")]
     [Authorize]
-    public IActionResult GetCategoryRemainingBudget(int categoryId, int householdId)
+    public IActionResult GetCategoryRemainingBudget(int categoryId, [FromRoute] int householdId)
     {
+        var currentMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
         var categoryBudget = _dbContext.CategoryBudgets.FirstOrDefault(cb =>
             cb.CategoryId == categoryId
             && cb.HouseholdId == householdId
-            && cb.Month.Month == DateTime.Now.Month
-            && cb.Month.Year == DateTime.Now.Year
+            && cb.Month.Month == currentMonth.Month
+            && cb.Month.Year == currentMonth.Year
         );
 
         if (categoryBudget == null)

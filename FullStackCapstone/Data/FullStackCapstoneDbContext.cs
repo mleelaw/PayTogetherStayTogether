@@ -138,62 +138,6 @@ public class FullStackCapstoneDbContext : IdentityDbContext<IdentityUser>
 
         modelBuilder.Entity<Category>().HasData(Category.GetPredefinedCategories());
 
-        modelBuilder
-            .Entity<Expense>()
-            .HasData(
-                new Expense
-                {
-                    Id = 1,
-                    HouseholdId = 1,
-                    Amount = 36.00m,
-                    CategoryId = 3,
-                    Description = "Nail Trim at Belmont Animal Hospital",
-                    PurchasedByUserId = 2,
-                    IsRecurring = true,
-                    FrequencyId = 5,
-                    IsFavorite = true,
-                    DateOfExpense = new DateTime(2023, 3, 04),
-                },
-                new Expense
-                {
-                    Id = 2,
-                    HouseholdId = 1,
-                    Amount = 33.00m,
-                    CategoryId = 2,
-                    Description = "WaffleHouse",
-                    PurchasedByUserId = 3,
-                    IsRecurring = false,
-                    IsFavorite = false,
-                    DateOfExpense = new DateTime(2023, 3, 03),
-                },
-                new Expense
-                {
-                    Id = 3,
-                    HouseholdId = 1,
-                    Amount = 1900m,
-                    CategoryId = 1,
-                    Description = "Rent",
-                    PurchasedByUserId = 3,
-                    IsRecurring = true,
-                    IsFavorite = true,
-                    FrequencyId = 4,
-                    DateOfExpense = new DateTime(2023, 3, 03),
-                },
-                new Expense
-                {
-                    Id = 4,
-                    HouseholdId = 2,
-                    Amount = 1900m,
-                    CategoryId = 1,
-                    Description = "Rent",
-                    PurchasedByUserId = 1,
-                    IsRecurring = true,
-                    IsFavorite = true,
-                    FrequencyId = 4,
-                    DateOfExpense = new DateTime(2023, 3, 03),
-                }
-            );
-
         modelBuilder.Entity<Frequency>().HasData(Frequency.GetPredefinedFrequencies());
 
         modelBuilder
@@ -249,6 +193,51 @@ public class FullStackCapstoneDbContext : IdentityDbContext<IdentityUser>
                     UserProfileId = 3,
                     IsActive = true,
                     IsAdmin = false,
+                }
+            );
+
+        modelBuilder
+            .Entity<CategoryBudget>()
+            .HasData(
+                new CategoryBudget
+                {
+                    Id = 1,
+                    CategoryId = 1, // Rent
+                    HouseholdId = 1,
+                    Month = new DateTime(2023, 3, 1),
+                    BudgetAmount = 2000.00m,
+                    RemainingBudget = 100.00m,
+                    IsActive = true,
+                },
+                new CategoryBudget
+                {
+                    Id = 2,
+                    CategoryId = 2, // Groceries
+                    HouseholdId = 1,
+                    Month = new DateTime(2023, 3, 1),
+                    BudgetAmount = 1000.00m,
+                    RemainingBudget = 967.00m,
+                    IsActive = true,
+                },
+                new CategoryBudget
+                {
+                    Id = 3,
+                    CategoryId = 3, // Pet Expenses
+                    HouseholdId = 1,
+                    Month = new DateTime(2023, 3, 1),
+                    BudgetAmount = 150.00m,
+                    RemainingBudget = 114.00m,
+                    IsActive = true,
+                },
+                new CategoryBudget
+                {
+                    Id = 4,
+                    CategoryId = 1, // Rent
+                    HouseholdId = 2,
+                    Month = new DateTime(2023, 3, 1),
+                    BudgetAmount = 2000.00m,
+                    RemainingBudget = 100.00m,
+                    IsActive = true,
                 }
             );
         modelBuilder

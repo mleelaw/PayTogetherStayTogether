@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace FullStackCapstone.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/household/{householdId}/user")]
 public class HouseholdUserController : ControllerBase
 {
     private FullStackCapstoneDbContext _dbContext;
@@ -19,7 +19,7 @@ public class HouseholdUserController : ControllerBase
         _dbContext = context;
     }
 
-    [HttpDelete("{householdId}")]
+    [HttpDelete]
     [Authorize]
     public IActionResult DeleteHouseholdUser([FromRoute] int householdId)
     {

@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace FullStackCapstone.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/households")]
 public class HouseholdController : ControllerBase
 {
     private FullStackCapstoneDbContext _dbContext;
@@ -169,13 +169,28 @@ public class HouseholdController : ControllerBase
             )
             .Sum(i => i.Amount);
 
-        Household household = _dbContext.Households.SingleOrDefault(h => h.Id == householdId);
+        var household = _dbContext
+            .Households.Include(h => h.HouseholdUsers)
+            .ThenInclude(hu => hu.UserProfile)
+            .SingleOrDefault(h => h.Id == householdId);
+
+
         var householdName = new HouseholdNameDTO { Id = household.Id, Name = household.Name };
 
-        decimal activeCategoryTotalBudget = _dbContext
-            .CategoryBudgets.Where(cb => cb.HouseholdId == householdId)
-            .Sum(cb => cb.Category.CategoryBudgetForTheMonth ?? 0m);
 
+        var householdMembers = household
+            .HouseholdUsers.Where(hu => hu.IsActive)
+            .Select(hu => new { UserId = hu.UserProfileId, FirstName = hu.UserProfile.FirstName })
+            .ToList();
+
+        decimal activeCategoryTotalBudget = _dbContext
+     .CategoryBudgets.Where(cb =>
+         cb.HouseholdId == householdId &&
+         cb.IsActive &&
+         cb.Month.Year == currentYear &&
+         cb.Month.Month == currentMonth &&
+         cb.Month.Day == 1)
+     .Sum(cb => cb.BudgetAmount);
         decimal budgetPercentageUsed = 0;
         if (activeCategoryTotalBudget > 0)
         {
@@ -189,6 +204,7 @@ public class HouseholdController : ControllerBase
             UserIncomes = userIncomeTotals,
             HouseholdTotalIncome = householdTotalIncome,
             HouseholdName = householdName,
+            HouseholdMembers = householdMembers,
             BudgetTotal = Math.Round(budgetPercentageUsed, 2),
         };
 
@@ -241,7 +257,11 @@ public class HouseholdController : ControllerBase
                 _dbContext.HouseholdUsers.Add(addUserToNewHouse);
                 _dbContext.SaveChanges();
 
-                var categories = _dbContext.Categories.Where(c => c.IsActive).ToList();
+                var categories = _dbContext
+                    .Categories.Where(c =>
+                        _dbContext.CategoryBudgets.Any(cb => cb.CategoryId == c.Id && cb.IsActive)
+                    )
+                    .ToList();
 
                 foreach (var category in categories)
                 {
@@ -249,8 +269,10 @@ public class HouseholdController : ControllerBase
                     {
                         HouseholdId = householdAddition.Id,
                         CategoryId = category.Id,
-                        Month = DateTime.Now,
-                        RemainingBudget = category.CategoryBudgetForTheMonth ?? 0m,
+                        Month = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1),
+                        BudgetAmount = 0m,
+                        RemainingBudget = 0m,
+                        IsActive = true,
                     };
 
                     _dbContext.CategoryBudgets.Add(categoryBudget);

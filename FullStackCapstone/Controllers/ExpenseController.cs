@@ -27,39 +27,48 @@ public class ExpenseController : ControllerBase
 
         try
         {
-            // Check if there's an existing CategoryBudget for this month
-            var findCategoryBudgetForThisExpense = _dbContext.CategoryBudgets.FirstOrDefault(cb =>
+
+            var currentMonth = new DateTime(
+                expense.DateOfExpense.Year,
+                expense.DateOfExpense.Month,
+                1
+            );
+
+
+            var categoryBudget = _dbContext.CategoryBudgets.FirstOrDefault(cb =>
                 cb.CategoryId == expense.CategoryId
                 && cb.HouseholdId == expense.HouseholdId
                 && cb.Month.Month == expense.DateOfExpense.Month
                 && cb.Month.Year == expense.DateOfExpense.Year
+                && cb.Month.Day == 1
             );
 
-            // Create a new CategoryBudget if none found
-            if (findCategoryBudgetForThisExpense == null)
+
+            if (categoryBudget == null)
             {
-                findCategoryBudgetForThisExpense = new CategoryBudget
+                categoryBudget = new CategoryBudget
                 {
                     HouseholdId = expense.HouseholdId,
                     CategoryId = expense.CategoryId,
-                    Month = new DateTime(expense.DateOfExpense.Year, expense.DateOfExpense.Month, 1),
-                    RemainingBudget = 0, // Or maybe start with the category's budget if applicable?
+                    Month = currentMonth,
+                    BudgetAmount = 0,
+                    RemainingBudget = 0,
+                    IsActive = true,
                 };
 
-                _dbContext.CategoryBudgets.Add(findCategoryBudgetForThisExpense);
-                _dbContext.SaveChanges(); // Save the new budget
+                _dbContext.CategoryBudgets.Add(categoryBudget);
+                _dbContext.SaveChanges();
             }
 
-            // Deduct the expense amount from the RemainingBudget
-            findCategoryBudgetForThisExpense.RemainingBudget -= expense.Amount;
-            _dbContext.CategoryBudgets.Update(findCategoryBudgetForThisExpense);
+            categoryBudget.RemainingBudget -= expense.Amount;
+            _dbContext.CategoryBudgets.Update(categoryBudget);
 
-            // Create the Expense
             Expense addExpense = new Expense
             {
                 HouseholdId = expense.HouseholdId,
                 Amount = expense.Amount,
                 CategoryId = expense.CategoryId,
+                CategoryBudgetId = categoryBudget.Id,
                 Description = expense.Description,
                 DateOfExpense = expense.DateOfExpense,
                 PurchasedByUserId = expense.PurchasedByUserId,
@@ -69,8 +78,6 @@ public class ExpenseController : ControllerBase
             };
 
             _dbContext.Expenses.Add(addExpense);
-
-            // Save both changes in one go
             _dbContext.SaveChanges();
             transaction.Commit();
 
@@ -82,7 +89,6 @@ public class ExpenseController : ControllerBase
             return StatusCode(500, $"Error: {ex.Message}");
         }
     }
-
 
     [HttpGet]
     [Authorize]
@@ -132,18 +138,16 @@ public class ExpenseController : ControllerBase
             return NotFound("Expense not found");
         }
 
-        // Get the associated CategoryBudget
         var categoryBudget = _dbContext.CategoryBudgets.SingleOrDefault(cb =>
             cb.HouseholdId == householdId
             && cb.CategoryId == removeExpense.CategoryId
-            && cb.Month.Month == DateTime.Now.Month
-            && // Use cb.Date.Month
-            cb.Month.Year == DateTime.Now.Year // Use cb.Date.Year
+            && cb.Month.Month == removeExpense.DateOfExpense.Month
+            && cb.Month.Year == removeExpense.DateOfExpense.Year
+            && cb.Month.Day == 1
         );
 
         if (categoryBudget != null)
         {
-            // Update the remaining budget
             categoryBudget.RemainingBudget += removeExpense.Amount;
         }
 
@@ -151,18 +155,6 @@ public class ExpenseController : ControllerBase
         _dbContext.SaveChanges();
 
         return Ok("Expense deleted and budget updated.");
-    }
-
-    [HttpGet("categories")]
-    [Authorize]
-    public IActionResult GetCategories()
-    {
-        var categories = _dbContext.Categories.ToList();
-        decimal totalBudget = _dbContext
-            .Categories.Where(c => c.IsActive)
-            .Sum(c => c.CategoryBudgetForTheMonth ?? 0);
-
-        return Ok(new { Categories = categories, TotalBudget = totalBudget });
     }
 
     [HttpGet("{expenseId}")]
@@ -186,20 +178,70 @@ public class ExpenseController : ControllerBase
         ExpensePostDTO expense
     )
     {
-        var expenseToUpdate = _dbContext.Expenses.SingleOrDefault(e =>
-            e.Id == expenseId && e.HouseholdId == householdId
-        );
+        using var transaction = _dbContext.Database.BeginTransaction();
 
-        expenseToUpdate.Amount = expense.Amount;
-        expenseToUpdate.CategoryId = expense.CategoryId;
-        expenseToUpdate.Description = expense.Description;
-        expenseToUpdate.DateOfExpense = expense.DateOfExpense;
-        expenseToUpdate.IsRecurring = expense.IsRecurring;
-        expenseToUpdate.FrequencyId = expense.FrequencyId;
-        expenseToUpdate.IsFavorite = expense.IsFavorite;
+        try
+        {
+            var expenseToUpdate = _dbContext.Expenses.SingleOrDefault(e =>
+                e.Id == expenseId && e.HouseholdId == householdId
+            );
 
-        _dbContext.SaveChanges();
+            if (expenseToUpdate == null)
+                return NotFound("Expense not found");
 
-        return Ok(expenseToUpdate);
+            decimal originalAmount = expenseToUpdate.Amount;
+            decimal amountDifference = expense.Amount - originalAmount;
+
+            var currentMonth = new DateTime(
+                expense.DateOfExpense.Year,
+                expense.DateOfExpense.Month,
+                1
+            );
+            var categoryBudget = _dbContext.CategoryBudgets.FirstOrDefault(cb =>
+                cb.HouseholdId == householdId
+                && cb.CategoryId == expense.CategoryId
+                && cb.Month.Year == currentMonth.Year
+                && cb.Month.Month == currentMonth.Month
+                && cb.Month.Day == 1
+            );
+
+            if (categoryBudget == null)
+            {
+                categoryBudget = new CategoryBudget
+                {
+                    HouseholdId = householdId,
+                    CategoryId = expense.CategoryId,
+                    Month = currentMonth,
+                    BudgetAmount = 0,
+                    RemainingBudget = -expense.Amount,
+                    IsActive = true,
+                };
+                _dbContext.CategoryBudgets.Add(categoryBudget);
+            }
+            else
+            {
+                categoryBudget.RemainingBudget -= amountDifference;
+                _dbContext.CategoryBudgets.Update(categoryBudget);
+            }
+
+            expenseToUpdate.Amount = expense.Amount;
+            expenseToUpdate.CategoryId = expense.CategoryId;
+            expenseToUpdate.Description = expense.Description;
+            expenseToUpdate.DateOfExpense = expense.DateOfExpense;
+            expenseToUpdate.IsRecurring = expense.IsRecurring;
+            expenseToUpdate.FrequencyId = expense.FrequencyId;
+            expenseToUpdate.IsFavorite = expense.IsFavorite;
+            expenseToUpdate.CategoryBudgetId = categoryBudget.Id;
+
+            _dbContext.SaveChanges();
+            transaction.Commit();
+
+            return Ok(expenseToUpdate);
+        }
+        catch (Exception ex)
+        {
+            transaction.Rollback();
+            return StatusCode(500, $"Error updating expense: {ex.Message}");
+        }
     }
 }

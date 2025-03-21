@@ -21,8 +21,6 @@ public class Income
 
     public bool IsFavorite { get; set; } = false;
 
-    //REMINDER this should be IsRecurring (makes more sense) + align with Expense, and remove bool
-
     public bool? IsFrequent { get; set; } = false;
 
     public int? FrequencyId { get; set; }
